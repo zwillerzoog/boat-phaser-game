@@ -91,7 +91,7 @@
             function CreateShip(type,x,y,angle){
                 // type is an int that can be between 1 and 6 inclusive 
                 // returns the sprite just created 
-                let sprite = game.add.sprite(x,y,'ship' + String(type) + '_1');
+                let sprite = game.add.sprite(x,y,'person' + String(type) + '_'+type);       //changed  "ship" to "person"    +    '_1 to type
                 sprite.rotation = angle;
                 sprite.anchor.setTo(0.5,0.5);
                 return sprite;
@@ -102,8 +102,9 @@
                 game.stage.backgroundColor = "#58da45";                             //+++changed background color 
                 // Load all the ships
                 for(let i=1;i<=10;i++){                                                 
-                    game.load.image('person'+String(i) +'_1', ASSET_URL + 'robot1_gun.png');           //+++changing assets 
+                    game.load.image('person'+String(i) +'_'+i, ASSET_URL + 'robot1_gun.png');           //+++changing assets 
                     game.load.image('person'+String(i) +'_2', ASSET_URL + 'robot2_gun.png');
+                    console.log('WHAT COULD THIS BE:', String(i));
                     game.load.image('person'+String(i) +'_3', ASSET_URL + 'robot3_gun.png');
                     game.load.image('person'+String(i) +'_4', ASSET_URL + 'robot4_gun.png');
                 }
@@ -124,6 +125,7 @@
                 game.stage.disableVisibilityChange = true;
                 // Create player
                 let playaer_robot_type = String(1);
+                console.log('WHAT COULD THIS BE:', String(1));
                 player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'person'+playaer_robot_type+'_1');
                 player.sprite.anchor.setTo(0.5,0.5);
                
