@@ -37,30 +37,26 @@ player = {
         // console.log('ROTATION', me.rotation)
         // Move forward
         if(game.input.keyboard.isDown(Phaser.Keyboard.UP) || game.input.keyboard.isDown(Phaser.Keyboard.W)){  
-            // console.log(game.camera.x - this.sprite.x)
             me.body.moveUp(200)
-            // if (this.sprite.y === 50 || this.sprite.y === 475) {
-            //     return;
-            // }
-            this.sprite.rotation = 5
-            // this.sprite.y += -10;
+            this.sprite.rotation = 3.1
         }
 
         //turn right
          if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.D)){
-            me.rotation = -6
+            me.rotation = 4.7
             me.body.moveRight(200)
         }
 
         //turn left
          if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || game.input.keyboard.isDown(Phaser.Keyboard.A)){
-            this.sprite.rotation = 3;
+            this.sprite.rotation = 1.6;
             me.body.moveLeft(200);
         }
 
         //move backward
         if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || game.input.keyboard.isDown(Phaser.Keyboard.S)){
             me.body.moveDown(200); 
+            this.sprite.rotation = 6.3;
         } 
        
         // Shoot bullet 
@@ -69,7 +65,12 @@ player = {
             let speed_y = Math.sin(this.sprite.rotation + Math.PI/2) * 20;
             this.shot = true;
             // Tell the server we shot a bullet 
-            socket.emit('shoot-bullet',{x:this.sprite.x,y:this.sprite.y,angle:this.sprite.rotation,speed_x:speed_x,speed_y:speed_y})
+            socket.emit('shoot-bullet',{
+                x: this.sprite.x+30,
+                y:this.sprite.y -30,
+                angle:this.sprite.rotation,
+                speed_x:speed_x,
+                speed_y:speed_y})
         }
         if(!game.input.activePointer.leftButton.isDown) this.shot = false;
         // To make player flash when they are hit, set player.spite.alpha = 0

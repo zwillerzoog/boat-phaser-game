@@ -84,7 +84,11 @@ let ASSET_URL = "assets/"
                 // game.camera.target = player.sprite;
                 // console.log('CAMERA: ', game.camera.target)
                 socket = io(); // This triggers the 'connection' event on the server
-                socket.emit('new-player',{x:player.sprite.x,y:player.sprite.y,angle:player.sprite.rotation,type:1})
+                socket.emit('new-player',{
+                    x:player.sprite.x,
+                    y:player.sprite.y,
+                    angle:player.sprite.rotation,
+                    type:1})
                 // Listen for other players connecting
                 socket.on('update-players',function(players_data){
                     let players_found = {};
