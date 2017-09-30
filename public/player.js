@@ -9,28 +9,38 @@ player = {
     friction:0.95,
     shot:false,
     update: function(){
+        let dx = (game.camera.x) - this.sprite.x;
+        let dy = (game.camera.y) - this.sprite.y;
+        let angle = Math.atan2(dy, dx) - Math.PI / 2;
+        let dir = (angle - this.sprite.rotation) / (Math.PI * 2);
+        dir -= Math.round(dir);
+        dir = dir * Math.PI * 2;
+        this.sprite.rotation += dir * 0.1;
         // Move forward
         if(game.input.keyboard.isDown(Phaser.Keyboard.UP) || game.input.keyboard.isDown(Phaser.Keyboard.W)){  
-            console.log(this.sprite)
-            this.sprite.x += 10;
+            // console.log(game.camera.x - this.sprite.x)
+            this.sprite.rotation = 5
+            this.sprite.y += -10;
         }
 
         //turn right
         if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.D)){
             console.log('Rotation: ', this.speed)
-            // this.speed_x += 10
-            this.sprite.y += 10
+            this.sprite.rotation = -6
+            this.sprite.x += 10
         }
 
         //turn left
         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || game.input.keyboard.isDown(Phaser.Keyboard.A)){
+            this.sprite.rotation = 3
             // this.speed_x += -10
-            this.sprite.y += -10
+            this.sprite.x += -10
         }
 
         //move backward
         if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || game.input.keyboard.isDown(Phaser.Keyboard.S)){
-            this.sprite.x += -10 
+           
+            this.sprite.y += 10 
             // this.speed_y += -10 
         }
         
@@ -43,13 +53,6 @@ player = {
         if(game.input.activePointer.leftButton.isDown && !this.shot){
             let speed_x = Math.cos(this.sprite.rotation + Math.PI/2) * 20;
             let speed_y = Math.sin(this.sprite.rotation + Math.PI/2) * 20;
-            /* The server is now simulating the bullets, clients are just rendering bullet locations, so no need to do this anymore
-            var bullet = {};
-            bullet.speed_x = speed_x;
-            bullet.speed_y = speed_y;
-            bullet.sprite = game.add.sprite(this.sprite.x + bullet.speed_x,this.sprite.y + bullet.speed_y,'bullet');
-            bullet_array.push(bullet); 
-            */
             this.shot = true;
             // Tell the server we shot a bullet 
             socket.emit('shoot-bullet',{x:this.sprite.x,y:this.sprite.y,angle:this.sprite.rotation,speed_x:speed_x,speed_y:speed_y})

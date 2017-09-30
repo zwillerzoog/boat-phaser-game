@@ -47,7 +47,7 @@ let ASSET_URL = "assets/"
 
                 // game.physics.startSystem(Phaser.Physics.P2JS);
 
-                // Create water tiles 
+                // Create tiles 
                 for(let i=0;i<=WORLD_SIZE.w/64+1;i++){
                     for(let j=0;j<=WORLD_SIZE.h/64+1;j++){
                         let tile_sprite = game.add.sprite(i * 64, j * 64, 'water');
