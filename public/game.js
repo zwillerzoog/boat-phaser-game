@@ -13,22 +13,26 @@ let ASSET_URL = "assets/"
             let sprite;
             let player;  
         
+           
             function createSprite(type,x,y,angle){
                 // type is an int that can be between 1 and 6 inclusive 
                 // returns the sprite just created 
+                game.physics.startSystem(Phaser.Physics.P2JS);
+                // game.physics.p2.restitution = 0.8;
+                
                 sprite = game.add.sprite(x,y,'person' + String(type) + '_'+type);       //changed  "ship" to "person"    +    '_1 to type
-                sprite.enableBody = true;
+                sprite.fiction = 0.95;
+             
                 sprite.rotation = angle;
                 sprite.anchor.setTo(0.5,0.5);
-                // console.log(this.sprite)
-                // game.physics.p2.enable(this.sprite);
+                
                 
                 // sprite.body.setZeroDamping();
                 // sprite.body.fixedRotation = true;
                 // console.log('SPRITE', sprite)
                 return sprite;
             }
-            
+            console.log(sprite)
             function preload(){
                 game.load.crossOrigin = "Anonymous";
                 game.stage.backgroundColor = "#58da45";                             //+++changed background color 
@@ -43,9 +47,12 @@ let ASSET_URL = "assets/"
                 game.load.image('bullet', ASSET_URL + 'blue_beam.png');
                 game.load.image('water', ASSET_URL + 'tile_06.png');
             }
+
+
             function create(){
 
-                // game.physics.startSystem(Phaser.Physics.P2JS);
+                game.physics.startSystem(Phaser.Physics.P2JS);
+                // game.physics.p2.restitution = 0.8;
 
                 // Create tiles 
                 for(let i=0;i<=WORLD_SIZE.w/64+1;i++){
@@ -56,15 +63,26 @@ let ASSET_URL = "assets/"
                         water_tiles.push(tile_sprite);
                     }
                 }
-                game.stage.disableVisibilityChange = true;
+                // game.stage.disableVisibilityChange = true;
                 // Create player
                 let player_robot_type = String(1);
                 player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'person'+player_robot_type+'_1');
                 // player.sprite.anchor.setTo(0.5,0.5);
                
+                game.physics.p2.enable(player.sprite);
+                player.sprite.body.setZeroDamping();
+                player.sprite.body.fixedRotation = true;
+                player.sprite.body.setZeroVelocity();
+
+
+
                 game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
-                game.camera.x = player.sprite.x - WINDOW_WIDTH/2;
-                game.camera.y = player.sprite.y - WINDOW_HEIGHT/2;
+                game.physics.startSystem(Phaser.Physics.P2JS);
+                // game.physics.p2.setImpactEvents(true)
+                game.camera.follow = player.sprite
+                // game.camera.y = player.sprite.y
+                // game.camera.target = player.sprite;
+                // console.log('CAMERA: ', game.camera.target)
                 socket = io(); // This triggers the 'connection' event on the server
                 socket.emit('new-player',{x:player.sprite.x,y:player.sprite.y,angle:player.sprite.rotation,type:1})
                 // Listen for other players connecting

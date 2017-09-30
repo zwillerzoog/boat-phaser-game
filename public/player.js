@@ -1,5 +1,7 @@
 
-console.log('hi', game)
+// function () {
+
+// }
 
 player = {
     sprite:null,//Will hold the sprite when it's created 
@@ -16,38 +18,50 @@ player = {
         dir -= Math.round(dir);
         dir = dir * Math.PI * 2;
         this.sprite.rotation += dir * 0.1;
+        // console.log(this.sprite)
+       let me = this.sprite
+            me.smoothed = false;
+            // console.log(me.body)
+            // //  Create our physics body. A circle assigned the playerCollisionGroup
+            game.physics.p2.enable(me);
+        	me.body.setZeroDamping();
+            me.body.fixedRotation = true;
+            me.body.setZeroVelocity();
+            // sprite.body.setCircle(28);
+            // //  This boolean controls if the player should collide with the world bounds or not
+            // sprite.body.collideWorldBounds = true;
+        
+            // cursors = game.input.keyboard.createCursorKeys();
+        // console.log('XXX: ', me.x);
+        // console.log('YYYY', me.y)
+        // console.log('ROTATION', me.rotation)
         // Move forward
         if(game.input.keyboard.isDown(Phaser.Keyboard.UP) || game.input.keyboard.isDown(Phaser.Keyboard.W)){  
             // console.log(game.camera.x - this.sprite.x)
+            me.body.moveUp(200)
+            // if (this.sprite.y === 50 || this.sprite.y === 475) {
+            //     return;
+            // }
             this.sprite.rotation = 5
-            this.sprite.y += -10;
+            // this.sprite.y += -10;
         }
 
         //turn right
-        if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.D)){
-            console.log('Rotation: ', this.speed)
-            this.sprite.rotation = -6
-            this.sprite.x += 10
+         if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.D)){
+            me.rotation = -6
+            me.body.moveRight(200)
         }
 
         //turn left
-        if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || game.input.keyboard.isDown(Phaser.Keyboard.A)){
-            this.sprite.rotation = 3
-            // this.speed_x += -10
-            this.sprite.x += -10
+         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || game.input.keyboard.isDown(Phaser.Keyboard.A)){
+            this.sprite.rotation = 3;
+            me.body.moveLeft(200);
         }
 
         //move backward
         if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || game.input.keyboard.isDown(Phaser.Keyboard.S)){
-           
-            this.sprite.y += 10 
-            // this.speed_y += -10 
-        }
-        
-        // this.sprite.x += this.speed_x;
-        // this.sprite.y = this.speed_y;
-        // this.speed_x *= this.friction;
-        // this.speed_y *= this.friction;
+            me.body.moveDown(200); 
+        } 
        
         // Shoot bullet 
         if(game.input.activePointer.leftButton.isDown && !this.shot){
@@ -66,7 +80,7 @@ player = {
         }
       
         // Tell the server we've moved 
-        socket.emit('move-player',{x:this.sprite.x,y:this.sprite.y,angle:this.sprite.rotation})
+        socket.emit('move-player',{x: me.x, y: me.y, angle: me.rotation})
 
     }
         
