@@ -4,11 +4,12 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http); // Here's where we include socket.io as a node module 
 
 // Serve the index page 
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/index.html'); 
-});
+// app.get("/", function (request, response) {
+//   response.sendFile(__dirname + '/index.html'); 
+// });
 
 // Serve the assets directory
+app.use(express.static('public'))
 app.use('/assets',express.static('assets'))
 
 // Listen on port 5000

@@ -1,22 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-   
-    <head>
-        <meta charset="UTF-8" />
-        <title>Multiplayer Battleship</title>
-        <!-- Load the Phaser game library -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.4.2/phaser.min.js"></script>
-        <!-- Load the Socket.io networking library -->
-        <script src="/socket.io/socket.io.js"></script>
-        
-        <!-- Some simple styles and fonts -->
-        <!-- <link rel="stylesheet" href="main.css"> -->
-
-    </head>
-  
-    <body>
-        <script >
-            let ASSET_URL = "assets/"
+let ASSET_URL = "assets/"
 
             //We first initialize the phaser game object
             let WINDOW_WIDTH = 750;
@@ -28,72 +10,22 @@
             let bullet_array = [];
             let other_players = {};
             let socket; //Declare it in this scope, initialize in the `create` function
-          
-          
-            let player = {
-                sprite:null,//Will hold the sprite when it's created 
-                speed_x:0,// This is the speed it's currently moving at
-                speed_y:0,
-                speed:0.5, // This is the parameter for how fast it should move 
-                friction:0.95,
-                shot:false,
-                update: function(){
-                    // Lerp rotation towards mouse
-                    let dx = (game.input.mousePointer.x + game.camera.x) - this.sprite.x;
-                    let dy = (game.input.mousePointer.y + game.camera.y) - this.sprite.y;
-                    let angle = Math.atan2(dy,dx) - Math.PI/2;
-                    let dir = (angle - this.sprite.rotation) / (Math.PI * 2);
-                    dir -= Math.round(dir);
-                    dir = dir * Math.PI * 2;
-                    this.sprite.rotation += dir * 0.1;
-                   
-                    // Move forward
-                    if(game.input.keyboard.isDown(Phaser.Keyboard.W) || game.input.keyboard.isDown(Phaser.Keyboard.UP)){
-                        this.speed_x += Math.cos(this.sprite.rotation + Math.PI/2) * this.speed;
-                        this.speed_y += Math.sin(this.sprite.rotation + Math.PI/2) * this.speed;
-                    }
-                    
-                    this.sprite.x += this.speed_x;
-                    this.sprite.y += this.speed_y;
-                    this.speed_x *= this.friction;
-                    this.speed_y *= this.friction;
-                   
-                    // Shoot bullet 
-                    if(game.input.activePointer.leftButton.isDown && !this.shot){
-                        let speed_x = Math.cos(this.sprite.rotation + Math.PI/2) * 20;
-                        let speed_y = Math.sin(this.sprite.rotation + Math.PI/2) * 20;
-                        /* The server is now simulating the bullets, clients are just rendering bullet locations, so no need to do this anymore
-                        var bullet = {};
-                        bullet.speed_x = speed_x;
-                        bullet.speed_y = speed_y;
-                        bullet.sprite = game.add.sprite(this.sprite.x + bullet.speed_x,this.sprite.y + bullet.speed_y,'bullet');
-                        bullet_array.push(bullet); 
-                        */
-                        this.shot = true;
-                        // Tell the server we shot a bullet 
-                        socket.emit('shoot-bullet',{x:this.sprite.x,y:this.sprite.y,angle:this.sprite.rotation,speed_x:speed_x,speed_y:speed_y})
-                    }
-                    if(!game.input.activePointer.leftButton.isDown) this.shot = false;
-                    // To make player flash when they are hit, set player.spite.alpha = 0
-                    if(this.sprite.alpha < 1){
-                        this.sprite.alpha += (1 - this.sprite.alpha) * 0.16;
-                    } else {
-                        this.sprite.alpha = 1;
-                    }
-                  
-                    // Tell the server we've moved 
-                    socket.emit('move-player',{x:this.sprite.x,y:this.sprite.y,angle:this.sprite.rotation})
-  
-                }
-                    
-                  
-            };
-            function CreateShip(type,x,y,angle){
+            let sprite;
+            let player;  
+        
+            function createSprite(type,x,y,angle){
                 // type is an int that can be between 1 and 6 inclusive 
                 // returns the sprite just created 
-                let sprite = game.add.sprite(x,y,'person' + String(type) + '_'+type);       //changed  "ship" to "person"    +    '_1 to type
+                sprite = game.add.sprite(x,y,'person' + String(type) + '_'+type);       //changed  "ship" to "person"    +    '_1 to type
+                sprite.enableBody = true;
                 sprite.rotation = angle;
                 sprite.anchor.setTo(0.5,0.5);
+                // console.log(this.sprite)
+                // game.physics.p2.enable(this.sprite);
+                
+                // sprite.body.setZeroDamping();
+                // sprite.body.fixedRotation = true;
+                // console.log('SPRITE', sprite)
                 return sprite;
             }
             
@@ -104,7 +36,6 @@
                 for(let i=1;i<=10;i++){                                                 
                     game.load.image('person'+String(i) +'_'+i, ASSET_URL + 'robot1_gun.png');           //+++changing assets 
                     game.load.image('person'+String(i) +'_2', ASSET_URL + 'robot2_gun.png');
-                    console.log('WHAT COULD THIS BE:', String(i));
                     game.load.image('person'+String(i) +'_3', ASSET_URL + 'robot3_gun.png');
                     game.load.image('person'+String(i) +'_4', ASSET_URL + 'robot4_gun.png');
                 }
@@ -113,6 +44,9 @@
                 game.load.image('water', ASSET_URL + 'tile_06.png');
             }
             function create(){
+
+                // game.physics.startSystem(Phaser.Physics.P2JS);
+
                 // Create water tiles 
                 for(let i=0;i<=WORLD_SIZE.w/64+1;i++){
                     for(let j=0;j<=WORLD_SIZE.h/64+1;j++){
@@ -124,10 +58,9 @@
                 }
                 game.stage.disableVisibilityChange = true;
                 // Create player
-                let playaer_robot_type = String(1);
-                console.log('WHAT COULD THIS BE:', String(1));
-                player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'person'+playaer_robot_type+'_1');
-                player.sprite.anchor.setTo(0.5,0.5);
+                let player_robot_type = String(1);
+                player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'person'+player_robot_type+'_1');
+                // player.sprite.anchor.setTo(0.5,0.5);
                
                 game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
                 game.camera.x = player.sprite.x - WINDOW_WIDTH/2;
@@ -142,7 +75,7 @@
                         // If the player hasn't been created yet
                         if(other_players[id] == undefined && id != socket.id){ // Make sure you don't create yourself
                             let data = players_data[id];
-                            let p = CreateShip(data.type,data.x,data.y,data.angle);
+                            let p = createSprite(data.type,data.x,data.y,data.angle);
                             other_players[id] = p;
                             console.log("Created new player at (" + data.x + ", " + data.y + ")");
                         }
@@ -248,7 +181,3 @@
             }
           
             
-        </script>
-
-    </body>
-</html>
