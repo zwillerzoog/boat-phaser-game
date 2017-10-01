@@ -11,14 +11,6 @@ player = {
     friction:0.95,
     shot:false,
     update: function(){
-        let dx = (game.camera.x) - this.sprite.x;
-        let dy = (game.camera.y) - this.sprite.y;
-        let angle = Math.atan2(dy, dx) - Math.PI / 2;
-        let dir = (angle - this.sprite.rotation) / (Math.PI * 2);
-        dir -= Math.round(dir);
-        dir = dir * Math.PI * 2;
-        this.sprite.rotation += dir * 0.1;
-        // console.log(this.sprite)
        let me = this.sprite
             me.smoothed = false;
             // console.log(me.body)
@@ -38,7 +30,7 @@ player = {
         // Move forward
         if(game.input.keyboard.isDown(Phaser.Keyboard.UP) || game.input.keyboard.isDown(Phaser.Keyboard.W)){  
             me.body.moveUp(200)
-            this.sprite.rotation = 3.1
+            me.rotation = 3.1
         }
 
         //turn right
@@ -49,35 +41,37 @@ player = {
 
         //turn left
          if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || game.input.keyboard.isDown(Phaser.Keyboard.A)){
-            this.sprite.rotation = 1.6;
+            me.rotation = 1.6;
             me.body.moveLeft(200);
         }
 
         //move backward
         if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || game.input.keyboard.isDown(Phaser.Keyboard.S)){
             me.body.moveDown(200); 
-            this.sprite.rotation = 6.3;
+            me.rotation = 6.3;
         } 
        
         // Shoot bullet 
         if(game.input.activePointer.leftButton.isDown && !this.shot){
-            let speed_x = Math.cos(this.sprite.rotation + Math.PI/2) * 20;
-            let speed_y = Math.sin(this.sprite.rotation + Math.PI/2) * 20;
+            let speed_x = Math.cos(me.rotation + Math.PI/2) * 20;
+            let speed_y = Math.sin(me.rotation + Math.PI/2) * 20;
             this.shot = true;
             // Tell the server we shot a bullet 
             socket.emit('shoot-bullet',{
-                x: this.sprite.x+30,
-                y:this.sprite.y -30,
-                angle:this.sprite.rotation,
+                x: me.x+30,
+                y:me.y -30,
+                angle:me.rotation,
                 speed_x:speed_x,
                 speed_y:speed_y})
         }
         if(!game.input.activePointer.leftButton.isDown) this.shot = false;
         // To make player flash when they are hit, set player.spite.alpha = 0
-        if(this.sprite.alpha < 1){
-            this.sprite.alpha += (1 - this.sprite.alpha) * 0.16;
+        if(me.alpha < 1){
+         
+            me.alpha += (1 - me.alpha) * 0.16;
         } else {
-            this.sprite.alpha = 1;
+            
+            me.alpha = 1;
         }
       
         // Tell the server we've moved 

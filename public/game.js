@@ -9,10 +9,14 @@ let ASSET_URL = "assets/"
             let water_tiles = [];
             let bullet_array = [];
             let other_players = {};
+            let done = false;
+            let score;
+            let scoreText;
             let socket; //Declare it in this scope, initialize in the `create` function
             let sprite;
             let player;  
-        
+            
+            
            
             function createSprite(type,x,y,angle){
                 // type is an int that can be between 1 and 6 inclusive 
@@ -63,6 +67,11 @@ let ASSET_URL = "assets/"
                         water_tiles.push(tile_sprite);
                     }
                 }
+
+                //SCORE
+                scoreText = game.add.text(16, 16, 'score:0', {fontSize: '32px',
+                fill: '#000' });
+
                 // game.stage.disableVisibilityChange = true;
                 // Create player
                 let player_robot_type = String(1);
@@ -127,7 +136,10 @@ let ASSET_URL = "assets/"
                   // If there's not enough bullets on the client, create them
                  for(let i=0;i<server_bullet_array.length;i++){
                       if(bullet_array[i] == undefined){
-                          bullet_array[i] = game.add.sprite(server_bullet_array[i].x,server_bullet_array[i].y,'bullet');
+                          bullet_array[i] = game.add.sprite(
+                              server_bullet_array[i].x,
+                              server_bullet_array[i].y,
+                              'bullet');
                       } else {
                           //Otherwise, just update it! 
                           bullet_array[i].x = server_bullet_array[i].x; 
@@ -145,15 +157,32 @@ let ASSET_URL = "assets/"
               
                 // Listen for any player hit events and make that player flash 
                 socket.on('player-hit',function(id){
+                    incrementScore();
                     if(id == socket.id){
                         //If this is you
                         player.sprite.alpha = 0;
                     } else {
-                        // Find the right player 
+                        setTimeout(done = true, 3000)
                         other_players[id].alpha = 0;
+                        // done = true;
                     }
                 })
+
+                socket.on('score', function(score) {
+                    scoreText.text = 'Score: ' + score;
+                })
             }
+
+            // function doneTruer() {
+            //     done = true
+            // }
+            function incrementScore() {
+                if (done) {
+                    // scoreText.text = 'Score: ' + score;
+                } 
+            }
+            
+
             function GameLoop(){
                 player.update();
                 // Move camera with player 

@@ -19,7 +19,8 @@ http.listen(app.get('port'), function(){
 });
 
 let players = {}; //Keeps a table of all players, the key is the socket id
-let bullet_array = []; // Keeps track of all the bullets to update them on the server 
+let bullet_array = [];
+let score = 0; // Keeps track of all the bullets to update them on the server 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket){
  //Listen for new messages
@@ -77,6 +78,11 @@ function ServerGameLoop(){
         let dist = Math.sqrt(dx * dx + dy * dy);
         if(dist < 70){
           io.emit('player-hit',id); // Tell everyone this player got hit
+        }
+        if (dist = 30) {
+          console.log('hiii')
+          score++
+          io.emit('score', score)
         }
       }
     }
