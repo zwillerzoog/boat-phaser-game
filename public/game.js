@@ -10,8 +10,8 @@ let ASSET_URL = "assets/"
             let bullet_array = [];
             let other_players = {};
             let done = false;
-            let score;
-            let scoreText;
+            let Health = 100;
+            let healthText;
             let socket; //Declare it in this scope, initialize in the `create` function
             let sprite;
             let player;  
@@ -69,7 +69,7 @@ let ASSET_URL = "assets/"
                 }
 
                 //SCORE
-                scoreText = game.add.text(16, 16, 'score:0', {fontSize: '32px',
+                healthText = game.add.text(16, 16, 'Health: 100', {fontSize: '32px',
                 fill: '#000' });
 
                 // game.stage.disableVisibilityChange = true;
@@ -156,15 +156,24 @@ let ASSET_URL = "assets/"
                 })
               
                 // Listen for any player hit events and make that player flash 
-                socket.on('player-hit',function(id){
-                    incrementScore();
+                socket.on('player-hit',function(state, id, health){
+                    let hitInfo = {}
+                    hitInfo = state;
+                    id = hitInfo.id
+                    health = hitInfo.health
+                    healthText.text = 'Health: ' + health;
                     if(id == socket.id){
                         //If this is you
                         player.sprite.alpha = 0;
                     } else {
-                        setTimeout(done = true, 3000)
+                        // console.log('id: ', id)
+                        // console.log('socket: ', socket.id)
                         other_players[id].alpha = 0;
-                        // done = true;
+                    }
+                    if (health < 0 && id == socket.id) {
+                        player.sprite.destroy()
+                    } else if (health < 0 && id != socket.id) {
+                        other_players[id].destroy()
                     }
                 })
 
