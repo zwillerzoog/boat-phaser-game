@@ -81,10 +81,10 @@ function ServerGameLoop(){
           health--
           io.emit('player-hit',{id, health}); // Tell everyone this player got hit
         }
-        if (health < 1) {
-          console.log('hiii', health, id)
-          io.emit('health', {health, id})
-        }
+        // if (health < 1) {
+        //   console.log('hiii', health, id)
+        //   io.emit('health', {health, id})
+        // }
       }
     }
     

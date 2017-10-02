@@ -19,7 +19,7 @@ canvas {
     bottom: 0;
     width: 400px;
     height: 500px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 form { 
     position: absolute;
@@ -28,7 +28,7 @@ form {
     /* left: 65%;  */
     bottom: 0; 
     width: 100%; 
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 form input { 
     /* background-color: #F84CF8; */
@@ -36,7 +36,7 @@ form input {
     padding: 10px; 
     width: 78%; 
     margin-right: .5%;
-    overflow-y: auto; 
+    /* overflow-y: auto;  */
 }
 
 form button { 
@@ -49,18 +49,18 @@ form button {
 
 
 #messages { 
-    
     position: fixed;
     list-style-type: none; 
     /* margin-left: 65%;  */
     padding: 0; 
     height: 400px;
+    width: 400px;
     overflow: auto;
 }
 
 #messages li { 
     padding: 5px 10px; 
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 /* #messages li:nth-child(odd) { 
