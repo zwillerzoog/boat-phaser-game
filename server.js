@@ -64,7 +64,7 @@ io.on('connection', function(socket){
 })
 
 // Update the bullets 60 times per frame and send updates 
-function ServerGameLoop(){
+function ServerGameLoop(socket){
   for(let i=0;i<bullet_array.length;i++){
     let bullet = bullet_array[i];
     bullet.x += bullet.speed_x; 
@@ -79,12 +79,14 @@ function ServerGameLoop(){
         let dist = Math.sqrt(dx * dx + dy * dy);
         if(dist < 70){
           health--
-          io.emit('player-hit',{id, health}); // Tell everyone this player got hit
+          // io.emit('health', health)
+          io.emit('player-hit', {id, health}); // Tell everyone this player got hit
         }
-        // if (health < 1) {
-        //   console.log('hiii', health, id)
-        //   io.emit('health', {health, id})
-        // }
+        if (health < 0) {
+          health = 100;
+          // console.log('hiii', health, id)
+          // io.emit('health', {health, id})
+        }
       }
     }
     

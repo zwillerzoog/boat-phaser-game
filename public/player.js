@@ -8,6 +8,7 @@ player = {
     speed_x:0,// This is the speed it's currently moving at
     speed_y:0,
     speed:0.5, // This is the parameter for how fast it should move 
+    health: 100,
     friction:0.95,
     shot:false,
     update: function(){

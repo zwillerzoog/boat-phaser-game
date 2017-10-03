@@ -10,7 +10,6 @@ let ASSET_URL = "assets/"
             let bullet_array = [];
             let other_players = {};
             let done = false;
-            let Health = 100;
             let healthText;
             let socket; //Declare it in this scope, initialize in the `create` function
             let sprite;
@@ -36,7 +35,7 @@ let ASSET_URL = "assets/"
                 // console.log('SPRITE', sprite)
                 return sprite;
             }
-            console.log(sprite)
+
             function preload(){
                 game.load.crossOrigin = "Anonymous";
                 game.stage.backgroundColor = "#58da45";                             //+++changed background color 
@@ -69,7 +68,7 @@ let ASSET_URL = "assets/"
                 }
 
                 //SCORE
-                healthText = game.add.text(16, 16, 'Health: 100', {fontSize: '32px',
+                healthText = game.add.text(16, 16, `Health: ${player.health}`, {fontSize: '32px',
                 fill: '#000' });
 
                 // game.stage.disableVisibilityChange = true;
@@ -161,10 +160,14 @@ let ASSET_URL = "assets/"
                     hitInfo = state;
                     id = hitInfo.id
                     health = hitInfo.health
-                    healthText.text = 'Health: ' + health;
+                    
                     if(id == socket.id){
                         //If this is you
                         player.sprite.alpha = 0;
+                        player.health = health
+                        healthText.text = 'Health: ' + player.health;
+                        console.log('player.health', player.health);
+                        
                     } else {
                         // console.log('id: ', id)
                         // console.log('socket: ', socket.id)
@@ -172,6 +175,10 @@ let ASSET_URL = "assets/"
                     }
                     if (health < 0 && id == socket.id) {
                         player.sprite.destroy()
+                        player.health = 100
+                        console.log('player.health', player.health);
+                        console.log('player', player);
+                        
                     } else if (health < 0 && id != socket.id) {
                         other_players[id].destroy()
                     }
