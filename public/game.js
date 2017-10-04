@@ -13,9 +13,12 @@ let ASSET_URL = "assets/"
             let healthText;
             let socket; //Declare it in this scope, initialize in the `create` function
             let sprite;
-            let player;  
-            
-            
+            let player;
+            let zombie1;
+            let zombie2;
+            let zombie3;
+            let zombies;
+
            
             function createSprite(type,x,y,angle){
                 // type is an int that can be between 1 and 6 inclusive 
@@ -49,13 +52,14 @@ let ASSET_URL = "assets/"
                 game.load.image('zombie', ASSET_URL + 'zombie.png')
                 game.load.image('bullet', ASSET_URL + 'blue_beam.png');
                 game.load.image('water', ASSET_URL + 'tile_06.png');
+                game.load.image('wall', ASSET_URL + 'tile_265.png')
             }
 
 
             function create(){
 
                 game.physics.startSystem(Phaser.Physics.P2JS);
-                // game.physics.p2.restitution = 0.8;
+                game.physics.p2.restitution = 0.8;
 
                 // Create tiles 
                 for(let i=0;i<=WORLD_SIZE.w/64+1;i++){
@@ -71,22 +75,43 @@ let ASSET_URL = "assets/"
                 healthText = game.add.text(16, 16, `Health: ${player.health}`, {fontSize: '32px',
                 fill: '#000' });
 
-                //zombie
-                zombie = game.add.sprite(
-                    Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
-                    Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
-                    'zombie'
-                )
-                zombie = game.add.sprite(
-                    Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
-                    Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
-                    'zombie'
-                )
-                zombie = game.add.sprite(
-                    Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
-                    Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
-                    'zombie'
-                )
+                //zombies
+                let zombieCollisionGroup = game.physics.p2.createCollisionGroup();
+                let playerCollisionGroup = game.physics.p2.createCollisionGroup();
+                game.physics.p2.updateBoundsCollisionGroup();
+
+
+                zombies = game.add.group();
+                zombies.enableBody = true;
+                zombies.physicsBodyType = Phaser.Physics.P2JS;
+                for (let i = 0; i < 4; i++)
+                {
+                    zombie = zombies.create(game.world.randomX, game.world.randomY, 'zombie');
+                    console.log(zombie.body)
+                    zombie.body.static = true;
+                    // zombie.body.velocity.y += 100;
+                    // zombie.body.velocity.x += -100
+                    // zombie.body.moveDown(100)
+                    // zombie.body.moveUp(200)
+                    // zombie.body.setCollisionGroup(zombieCollisionGroup)
+                    // zombie.body.collides([zombieCollisionGroup, playerCollisionGroup]);
+                }
+
+                // zombie1 = game.add.sprite(
+                //     Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
+                //     Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
+                //     'zombie'
+                // )
+                // zombie2 = game.add.sprite(
+                //     Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
+                //     Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
+                //     'zombie'
+                // )
+                // zombie3 = game.add.sprite(
+                //     Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
+                //     Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
+                //     'zombie'
+                // )
 
                 // game.stage.disableVisibilityChange = true;
                 // Create player
@@ -204,10 +229,29 @@ let ASSET_URL = "assets/"
                     scoreText.text = 'Score: ' + score;
                 })
             }
+
+            function randomWholeNumber() {
+               let number = Math.floor(Math.random() * 4);
+               return number;
+            }
             
 
             function GameLoop(){
                 player.update();
+
+                //Move zombies
+                game.physics.p2.enable(zombies);
+
+                // if (randomWholeNumber() === 1) {
+                //     zombie1.body.moveDown(200)
+                // } else if (randomWholeNumber === 0) {
+                //     zombie1.body.moveRight(200)
+                // }   else if (randomWholeNumber === 2) {
+                //     zombie1.body.moveLeft(200)
+                // } else if (randomWholeNumber === 3) {
+                //     zombie1.body.moveUp(200)
+                // }
+
                 // Move camera with player 
                 let camera_x = player.sprite.x - WINDOW_WIDTH/2;
                 let camera_y = player.sprite.y - WINDOW_HEIGHT/2;
