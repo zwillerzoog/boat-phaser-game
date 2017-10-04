@@ -46,7 +46,7 @@ let ASSET_URL = "assets/"
                     game.load.image('person'+String(i) +'_3', ASSET_URL + 'robot3_gun.png');
                     game.load.image('person'+String(i) +'_4', ASSET_URL + 'robot4_gun.png');
                 }
-                
+                game.load.image('zombie', ASSET_URL + 'zombie.png')
                 game.load.image('bullet', ASSET_URL + 'blue_beam.png');
                 game.load.image('water', ASSET_URL + 'tile_06.png');
             }
@@ -71,10 +71,30 @@ let ASSET_URL = "assets/"
                 healthText = game.add.text(16, 16, `Health: ${player.health}`, {fontSize: '32px',
                 fill: '#000' });
 
+                //zombie
+                zombie = game.add.sprite(
+                    Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
+                    Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
+                    'zombie'
+                )
+                zombie = game.add.sprite(
+                    Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
+                    Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
+                    'zombie'
+                )
+                zombie = game.add.sprite(
+                    Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
+                    Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
+                    'zombie'
+                )
+
                 // game.stage.disableVisibilityChange = true;
                 // Create player
                 let player_robot_type = String(1);
-                player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'person'+player_robot_type+'_1');
+                player.sprite = game.add.sprite(
+                    Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
+                    Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
+                    'person'+player_robot_type+'_1');
                 // player.sprite.anchor.setTo(0.5,0.5);
                
                 game.physics.p2.enable(player.sprite);
@@ -82,15 +102,11 @@ let ASSET_URL = "assets/"
                 player.sprite.body.fixedRotation = true;
                 player.sprite.body.setZeroVelocity();
 
-
-
                 game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
                 game.physics.startSystem(Phaser.Physics.P2JS);
                 // game.physics.p2.setImpactEvents(true)
                 game.camera.follow = player.sprite
-                // game.camera.y = player.sprite.y
-                // game.camera.target = player.sprite;
-                // console.log('CAMERA: ', game.camera.target)
+            
                 socket = io(); // This triggers the 'connection' event on the server
                 socket.emit('new-player',{
                     x:player.sprite.x,
@@ -134,7 +150,7 @@ let ASSET_URL = "assets/"
                 socket.on('bullets-update',function(server_bullet_array){
                   // If there's not enough bullets on the client, create them
                  for(let i=0;i<server_bullet_array.length;i++){
-                      if(bullet_array[i] == undefined){
+                      if(bullet_array[i] == undefined && player.health > 0){
                           bullet_array[i] = game.add.sprite(
                               server_bullet_array[i].x,
                               server_bullet_array[i].y,
@@ -188,15 +204,6 @@ let ASSET_URL = "assets/"
                     scoreText.text = 'Score: ' + score;
                 })
             }
-
-            // function doneTruer() {
-            //     done = true
-            // }
-            function incrementScore() {
-                if (done) {
-                    // scoreText.text = 'Score: ' + score;
-                } 
-            }
             
 
             function GameLoop(){
@@ -231,20 +238,6 @@ let ASSET_URL = "assets/"
                         p.rotation += dir * 0.16;
                     }
                 }
-                /* We're updating the bullets on the server, so we don't need to do this on the client anymore 
-                // Update bullets 
-                for(let i=0;i<bullet_array.length;i++){
-                    let bullet = bullet_array[i];
-                    bullet.sprite.x += bullet.speed_x; 
-                    bullet.sprite.y += bullet.speed_y; 
-                    // Remove if it goes too far off screen 
-                    if(bullet.sprite.x < -10 || bullet.sprite.x > WORLD_SIZE.w || bullet.sprite.y < -10 || bullet.sprite.y > WORLD_SIZE.h){
-                        bullet.sprite.destroy();
-                        bullet_array.splice(i,1);
-                        i--;
-                    }
-                } 
-                */
             }
           
             

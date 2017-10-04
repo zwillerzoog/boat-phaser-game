@@ -28,27 +28,36 @@ player = {
         // console.log('XXX: ', me.x);
         // console.log('YYYY', me.y)
         // console.log('ROTATION', me.rotation)
-        // Move forward
-        if(game.input.keyboard.isDown(Phaser.Keyboard.UP) || game.input.keyboard.isDown(Phaser.Keyboard.W)){  
-            me.body.moveUp(200)
+
+        //Controls
+        let up = game.input.keyboard.isDown(Phaser.Keyboard.UP) || game.input.keyboard.isDown(Phaser.Keyboard.W);
+        let right = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.D);
+        let left = game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || game.input.keyboard.isDown(Phaser.Keyboard.A);
+        let down = game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || game.input.keyboard.isDown(Phaser.Keyboard.S)
+        let shift = game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)
+
+        // Move up
+
+       
+        if(up){  
+            me.body.velocity.y = -250
             me.rotation = 3.1
+        } 
+        if(right){ //turn right
+            me.rotation = 4.7;
+            // me.body.moveRight(200)
+            me.body.velocity.x = 250;
         }
-
-        //turn right
-         if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.D)){
-            me.rotation = 4.7
-            me.body.moveRight(200)
-        }
-
         //turn left
-         if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || game.input.keyboard.isDown(Phaser.Keyboard.A)){
+         if(left){
             me.rotation = 1.6;
-            me.body.moveLeft(200);
+            me.body.velocity.x = -250;
+            // me.body.moveLeft(200);
         }
-
-        //move backward
-        if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || game.input.keyboard.isDown(Phaser.Keyboard.S)){
-            me.body.moveDown(200); 
+        //move down
+        if(down){
+            me.body.velocity.y = 250;
+            // me.body.moveDown(200); 
             me.rotation = 6.3;
         } 
        
