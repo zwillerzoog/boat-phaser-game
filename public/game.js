@@ -87,6 +87,18 @@ function create() {
         fill: '#000'
     });
 
+    // Walls
+    let walls = game.add.group();
+    walls.enableBody = true;
+    walls.physicsBodyType = Phaser.Physics.P2JS;
+    wall1 = walls.create(200, WINDOW_HEIGHT / 2, 'wall');
+    wall1.body.static = true;
+
+    wall2 = game.add.sprite(550, WINDOW_HEIGHT / 2, 'wall');
+    walls.add(wall2);
+    wall2.body.rotation = 1.5708;
+    wall2.body.static = true;
+
     // game.stage.disableVisibilityChange = true;
     // Create player
     let player_robot_type = String(1);
