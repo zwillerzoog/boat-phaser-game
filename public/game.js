@@ -18,16 +18,14 @@ let zombie1;
 let zombie2;
 let zombie3;
 let zombies;
-let robots = [{
-  robot1 : true, assets: 'robot1'
-},
-{robot2 : true, assets:'robot2'},
-{robot3 : true, assets:'robot3'},
-{robot4 : true, assets:'robot4'
-}
+let robots = [
+  {robot1 : true, assets: 'robot1'},
+  {robot2 : false, assets:'robot2'},
+  {robot3 : false, assets:'robot3'},
+  {robot4 : false, assets:'robot4'
+  }
 ];
-
-currentRobot = 0;
+let currentRobot = 0;
            
 function createSprite(x,y,angle, id){
   // type is an int that can be between 1 and 6 inclusive 
@@ -125,7 +123,7 @@ function create(){
   player.sprite = game.add.sprite(
     Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,
     Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,
-    robots[currentRobot]);
+    robots[currentRobot].assets);
   // player.sprite.anchor.setTo(0.5,0.5);
                
   game.physics.p2.enable(player.sprite);
@@ -245,6 +243,17 @@ function randomWholeNumber() {
 function GameLoop(){
   player.update();
 
+  //changing players 
+  if (game.input.keyboard.isDown(Phaser.Keyboard.C)) {
+      if (currentRobot < 3) {
+          currentRobot++;
+        console.log('HEEELLLLLLOOOOO:', robots[currentRobot]);
+      return player.sprite.loadTexture(robots[currentRobot].assets);
+    } else {
+        currentRobot = 0; 
+        console.log('CURRENTROBOT', currentRobot);
+    }
+  }
   //Move zombies
   game.physics.p2.enable(zombies);
 
@@ -273,13 +282,9 @@ function GameLoop(){
       other_players[id].alpha = 1;
     }
   }
-    //changing players 
-   if (game.input.keyboard.isDown(Phaser.Keyboard.c)) {
-    currentRobot++;
-    return player.sprite.loadTexture(robots[currentRobot].assets);
-   }
+  
 
-   ;
+   
 
   // Interpolate all players to where they should be 
   for(let id in other_players){
