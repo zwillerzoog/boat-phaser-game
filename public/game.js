@@ -87,6 +87,9 @@ function create() {
         fill: '#000'
     });
 
+    //Zombie Create
+    zombie.update()
+
     // Walls
     let walls = game.add.group();
     walls.enableBody = true;
