@@ -61,7 +61,7 @@ function preload() {
             ASSET_URL + 'robot4_gun.png'
         );
     }
-
+    game.load.image('zombie', ASSET_URL + 'zombie.png')
     game.load.image('bullet', ASSET_URL + 'blue_beam.png');
     game.load.image('water', ASSET_URL + 'tile_06.png');
     game.load.image('wall', ASSET_URL + 'trak2_trim2b.png');

@@ -14,30 +14,33 @@ let zombie = {
         for (let i = 0; i < 4; i++) {
             zombie1 = zombies.create(100, 250, 'zombie');
             zombie1.body.collideWorldBounds = true;  
-            game.physics.arcade.collide(zombie, player.sprite);
+            game.physics.arcade.collide(zombie1, player.sprite);
             tween = game.add.tween(zombie1)
             switch (i) {
                 case 0:
                     tween.to({ 
                         x: [500, 500, 100, 100], 
                         y: [250, 150, 150, 250] }, 
-                        3000, "Linear");
+                        9000, "Linear");
                     break;
                 case 1:
                     tween.to({ 
                         x: [100, 500, 200, 100], 
                         y: [150, 150, 150, 150] }, 
                         3000, "Linear");
+                        break;
                 case 2:
                     tween.to({ 
                         x: [0, 500, 200, 0], 
                         y: [150, 150, 150, 150] }, 
                         3000, "Linear");
+                        break;
                 case 3:
                     tween.to({ 
                         x: [400, 700, 300, 400], 
                         y: [250, 150, 150, 250] }, 
                         7000, "Linear");
+                        break;
             }
             
             tween.start();
