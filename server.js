@@ -4,11 +4,12 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http); // Here's where we include socket.io as a node module 
 
 // Serve the index page 
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/index.html'); 
-});
+// app.get("/", function (request, response) {
+//   response.sendFile(__dirname + '/index.html'); 
+// });
 
 // Serve the assets directory
+app.use(express.static('public'))
 app.use('/assets',express.static('assets'))
 
 // Listen on port 5000
@@ -18,13 +19,21 @@ http.listen(app.get('port'), function(){
 });
 
 let players = {}; //Keeps a table of all players, the key is the socket id
-let bullet_array = []; // Keeps track of all the bullets to update them on the server 
+let bullet_array = [];
+let health = 100; // Keeps track of all the bullets to update them on the server 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket){
-	// Listen for a new player trying to connect
+ //Listen for new messages
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+ // Listen for a new player trying to connect
 	socket.on('new-player',function(state){
-		console.log("New player joined with state:",state);
-		players[socket.id] = state;
+		console.log("New player joined with state:", state);
+    state.numberOfPlayers = Object.keys(players).length;
+    console.log('numberOfPlayers:', state.numberOfPlayers);
+    players[socket.id] = state;
+
 		// Broadcast a signal to everyone containing the updated players list
 		io.emit('update-players',players);
 	})
@@ -57,7 +66,7 @@ io.on('connection', function(socket){
 })
 
 // Update the bullets 60 times per frame and send updates 
-function ServerGameLoop(){
+function ServerGameLoop(socket){
   for(let i=0;i<bullet_array.length;i++){
     let bullet = bullet_array[i];
     bullet.x += bullet.speed_x; 
@@ -71,7 +80,14 @@ function ServerGameLoop(){
         let dy = players[id].y - bullet.y;
         let dist = Math.sqrt(dx * dx + dy * dy);
         if(dist < 70){
-          io.emit('player-hit',id); // Tell everyone this player got hit
+          health--
+          // io.emit('health', health)
+          io.emit('player-hit', {id, health}); // Tell everyone this player got hit
+        }
+        if (health < 0) {
+          health = 100;
+          // console.log('hiii', health, id)
+          // io.emit('health', {health, id})
         }
       }
     }
