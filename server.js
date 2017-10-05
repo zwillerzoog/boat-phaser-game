@@ -30,6 +30,8 @@ io.on('connection', function(socket){
  // Listen for a new player trying to connect
 	socket.on('new-player',function(state){
 		console.log("New player joined with state:", state);
+    state.numberOfPlayers = Object.keys(players).length;
+    console.log('numberOfPlayers:', state.numberOfPlayers);
     players[socket.id] = state;
 
 		// Broadcast a signal to everyone containing the updated players list
