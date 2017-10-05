@@ -15,8 +15,9 @@ canvas {
     position:fixed;
     border: 1px solid black;
     left: 65%;
-    top: 0;
+    top: 50px;
     bottom: 0;
+    height: 500px;
     width: 400px;
 }
 form { 
