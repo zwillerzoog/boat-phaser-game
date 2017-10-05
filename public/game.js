@@ -19,6 +19,7 @@ let scoreText;
 let socket; //Declare it in this scope, initialize in the `create` function
 let sprite;
 let player;
+let walls;
 
 function createSprite(type, x, y, angle) {
     // type is an int that can be between 1 and 6 inclusive
@@ -63,6 +64,7 @@ function preload() {
 
     game.load.image('bullet', ASSET_URL + 'blue_beam.png');
     game.load.image('water', ASSET_URL + 'tile_06.png');
+    game.load.image('wall', ASSET_URL + 'trak2_trim2b.png');
 }
 
 function create() {
