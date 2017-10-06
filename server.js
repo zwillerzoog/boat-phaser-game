@@ -21,6 +21,8 @@ http.listen(app.get('port'), function() {
 let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
 let score = 0; // Keeps track of all the bullets to update them on the server
+let zombies = []
+
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
     //Listen for new messages
@@ -34,6 +36,11 @@ io.on('connection', function(socket) {
         // Broadcast a signal to everyone containing the updated players list
         io.emit('update-players', players);
     });
+    
+    socket.on('zombie-maker', function(zombiePositions) {
+        zombies = zombiePositions;
+        io.emit('update-zombies', zombies)
+    })
 
     // Listen for a disconnection and update our player table
     socket.on('disconnect', function(state) {

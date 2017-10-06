@@ -87,8 +87,6 @@ function create() {
         fill: '#000'
     });
 
-    //Zombie Create
-    zombie.update()
 
     // Walls
     let walls = game.add.group();
@@ -131,6 +129,12 @@ function create() {
         angle: player.sprite.rotation,
         type: 1
     });
+
+    //create zombies
+    socket.emit('zombie-maker', zombie.update())
+    socket.on('update-zombies', function(data) {
+        console.log(data)
+    })
     // Listen for other players connecting
     socket.on('update-players', function(players_data) {
         let players_found = {};
@@ -247,18 +251,4 @@ function GameLoop() {
             p.rotation += dir * 0.16;
         }
     }
-    /* We're updating the bullets on the server, so we don't need to do this on the client anymore 
-                // Update bullets 
-                for(let i=0;i<bullet_array.length;i++){
-                    let bullet = bullet_array[i];
-                    bullet.sprite.x += bullet.speed_x; 
-                    bullet.sprite.y += bullet.speed_y; 
-                    // Remove if it goes too far off screen 
-                    if(bullet.sprite.x < -10 || bullet.sprite.x > WORLD_SIZE.w || bullet.sprite.y < -10 || bullet.sprite.y > WORLD_SIZE.h){
-                        bullet.sprite.destroy();
-                        bullet_array.splice(i,1);
-                        i--;
-                    }
-                } 
-                */
 }
