@@ -22,6 +22,9 @@ let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
 let score = 0; // Keeps track of all the bullets to update them on the server
 let zombies = []
+let zombie0;
+let zombie1;
+let zombie2;
 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
@@ -57,6 +60,16 @@ io.on('connection', function(socket) {
         io.emit('update-players', players);
     });
 
+    socket.on('zombie-movements', function(zombie_positions) {
+        console.log(zombie_positions.zombie1)
+        zombie0.x = zombie_positions.zombie0.x
+        zombe0.y = zombie_positions.zombie0.y
+        zombie1.x = zombie_positions.zombie1.x
+        zombe1.y = zombie_positions.zombie1.y
+        zombie2.x = zombie_positions.zombie2.x
+        zombe2.y = zombie_positions.zombie2.y
+        io.emit('update-zombies', [zombie0, zombie1, zombie2])
+    })
     // Listen for shoot-bullet events and add it to our bullet array
     socket.on('shoot-bullet', function(data) {
         if (players[socket.id] == undefined) return;

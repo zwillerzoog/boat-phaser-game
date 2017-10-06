@@ -5,9 +5,12 @@ let zombieArray = [];
 let tween = [];
 let i = 3
 
+
 //zombies
 let zombie = {
     update: function() {
+        let xArray = [];
+        let yArray = []
         let playerCollisionGroup = game.physics.p2.createCollisionGroup();
         let zombieCollisionGroup = game.physics.p2.createCollisionGroup();
         game.physics.p2.updateBoundsCollisionGroup();
@@ -18,41 +21,63 @@ let zombie = {
         zombies.physicsBodyType = Phaser.Physics.P2JS;
         
         // for (let i = 0; i < 4; i++) {
-            zombieArray[0] = zombies.create(100, 100, 'zombie');
-            zombieArray[0].body.kinematic = true;
-            tween0 = game.add.tween(zombieArray[0].body)
+            zombie0 = zombies.create(100, 100, 'zombie');
+            zombie0.body.kinematic = true;
+            tween0 = game.add.tween(zombie0.body)
+            xArray = [500, 500, 100, 100]
+            yArray = [250, 150, 150, 100]
             tween0.to({ 
-                        x: [500, 500, 100, 100], 
-                        y: [250, 150, 150, 100] }, 
+                        x: xArray, 
+                        y: yArray}, 
                         10000, "Linear");
             
             tween0.start();
             tween0.loop()
-            // zombieArray[0].body.setCollisionGroup(zombieCollisionGroup)
-            // zombieArray[0].body.collideWorldBounds = true; 
+            // zombie0.body.setCollisionGroup(zombieCollisionGroup)
+            // zombie0.body.collideWorldBounds = true; 
 
-            zombieArray[1] = zombies.create(100, 370, 'zombie');
-            zombieArray[1].body.kinematic = true;
-            tween1 = game.add.tween(zombieArray[1].body)
+            zombie1 = zombies.create(100, 370, 'zombie');
+            zombie1.body.kinematic = true;
+            tween1 = game.add.tween(zombie1.body)
+            xArray= [500, 100];
+            yArray=[370, 370];
             tween1.to({ 
-                        x: [500, 100], 
-                        y: [370, 370] }, 
+                        x: xArray, 
+                        y: yArray }, 
                         10000, "Linear");
             
             tween1.start();
             tween1.loop()
 
-            zombieArray[2] = zombies.create(700, 100, 'zombie');
-            zombieArray[2].body.kinematic = true;
-            tween2 = game.add.tween(zombieArray[2].body)
+            zombie2 = zombies.create(700, 100, 'zombie');
+            zombie2.body.kinematic = true;
+            tween2 = game.add.tween(zombie2.body)
+            xArray = [700, 650, 650, 700]
+            yArray = [370, 100, 370, 100]
             tween2.to({ 
-                        x: [700, 650, 650, 700], 
-                        y: [370, 100, 370, 100] }, 
+                        x: xArray, 
+                        y:  yArray}, 
                         10000, "Linear");
             
             tween2.start();
             tween2.loop()
-            // zombieArray[0].body.collides(playerCollisionGroup, eatPlayer, this)
+            // zombie0.body.collides(playerCollisionGroup, eatPlayer, this)
+                console.log(zombie0.body.x)
+
+            io.emit('zombie-movements', {
+                zombie0: {
+                    x: zombie0.body.x,
+                    y: zombie0.body.y        
+                },
+                zombie1: {
+                    x: zombie0.body.x,
+                    y: zombie0.body.y        
+                },
+                zombie2: {
+                    x: zombie0.body.x,
+                    y: zombie0.body.y        
+                }
+            })
             }
          
     }

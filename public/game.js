@@ -70,7 +70,6 @@ function preload() {
 function create() {
     game.physics.startSystem(Phaser.Physics.P2JS);
     // game.physics.p2.restitution = 0.8;
-
     // Create tiles
     for (let i = 0; i <= WORLD_SIZE.w / 64 + 1; i++) {
         for (let j = 0; j <= WORLD_SIZE.h / 64 + 1; j++) {
@@ -130,13 +129,15 @@ function create() {
         type: 1
     });
 
-    //create zombies
-    socket.emit('zombie-maker', zombie.update())
-    socket.on('update-zombies', function(data) {
-        console.log(data)
-    })
+    
+    // //create zombies
+    // socket.emit('zombie-maker', zombie.update())
+    // socket.on('update-zombies', function(data) {
+    //     console.log(data)
+    // })
     // Listen for other players connecting
     socket.on('update-players', function(players_data) {
+        
         let players_found = {};
         // Loop over all the player data received
         for (let id in players_data) {
@@ -167,6 +168,13 @@ function create() {
             }
         }
     });
+
+    socket.on('update-zombies', function(data) {
+        console.log('hi')
+        console.log(data)
+        // let foundZombies = [];
+        // foundZombies[0].x = zombie0
+    })
 
     // Listen for bullet update events
     socket.on('bullets-update', function(server_bullet_array) {
@@ -221,6 +229,7 @@ function incrementScore() {
 
 function GameLoop() {
     player.update();
+    zombie.update();
     // Move camera with player
     let camera_x = player.sprite.x - WINDOW_WIDTH / 2;
     let camera_y = player.sprite.y - WINDOW_HEIGHT / 2;
