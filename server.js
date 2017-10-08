@@ -20,11 +20,8 @@ http.listen(app.get('port'), function() {
 
 let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
-let score = 0; // Keeps track of all the bullets to update them on the server
-let zombies = []
-let zombie0;
-let zombie1;
-let zombie2;
+let health = 100; // Keeps track of all the bullets to update them on the server
+let zombies = {}
 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
@@ -40,8 +37,8 @@ io.on('connection', function(socket) {
         io.emit('update-players', players);
     });
     
-    socket.on('zombie-maker', function(zombiePositions) {
-        zombies = zombiePositions;
+    socket.on('new-zombie', function(zombie_state) {
+        zombies = zombie_state
         io.emit('update-zombies', zombies)
     })
 
@@ -60,16 +57,19 @@ io.on('connection', function(socket) {
         io.emit('update-players', players);
     });
 
-    socket.on('zombie-movements', function(zombie_positions) {
-        console.log(zombie_positions.zombie1)
-        zombie0.x = zombie_positions.zombie0.x
-        zombe0.y = zombie_positions.zombie0.y
-        zombie1.x = zombie_positions.zombie1.x
-        zombe1.y = zombie_positions.zombie1.y
-        zombie2.x = zombie_positions.zombie2.x
-        zombe2.y = zombie_positions.zombie2.y
-        io.emit('update-zombies', [zombie0, zombie1, zombie2])
-    })
+    socket.on('move-zombie', function(position_data) {
+        if (zombies[socket.id] == undefined) return; // Happens if the server restarts and a client is still connected
+        zombies[socket.id].x = position_data.x;
+        zombies[socket.id].y = position_data.y;
+        zombies[socket.id].angle = position_data.angle;
+        io.emit('update-zombies', zombies);
+    });
+
+    // socket.on('zombie-movements', function(zombie_positions) {
+
+    //     console.log('positionsss', zombie_positions)
+    //     io.emit('update-zombies', [zombie0, zombie1, zombie2])
+    // })
     // Listen for shoot-bullet events and add it to our bullet array
     socket.on('shoot-bullet', function(data) {
         if (players[socket.id] == undefined) return;
@@ -97,13 +97,12 @@ function ServerGameLoop() {
                 let dy = players[id].y - bullet.y;
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 70) {
-                    io.emit('player-hit', id); // Tell everyone this player got hit
+                    health--
+                    io.emit('player-hit', {id, health}); // Tell everyone this player got hit
                 }
-                if ((dist = 30)) {
-                    console.log('hiii');
-                    score++;
-                    io.emit('score', score);
-                }
+                // if (health < 0) {
+
+                // }
             }
         }
 

@@ -84,7 +84,6 @@ player = {
         } else {
             me.alpha = 1;
         }
-
         // Tell the server we've moved
         socket.emit('move-player', { x: me.x, y: me.y, angle: me.rotation });
     }
