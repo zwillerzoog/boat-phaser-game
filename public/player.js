@@ -1,6 +1,3 @@
-// function () {
-
-// }
 
 player = {
     sprite: null, //Will hold the sprite when it's created
@@ -18,15 +15,7 @@ player = {
         me.body.setZeroDamping();
         me.body.fixedRotation = true;
         me.body.setZeroVelocity();
-        // sprite.body.setCircle(28);
-        // //  This boolean controls if the player should collide with the world bounds or not
-        // sprite.body.collideWorldBounds = true;
-
-        // cursors = game.input.keyboard.createCursorKeys();
-        // console.log('XXX: ', me.x);
-        // console.log('YYYY', me.y)
-        // console.log('ROTATION', me.rotation)
-
+        
         // Move forward
         if (
             game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
@@ -68,6 +57,7 @@ player = {
             let speed_x = Math.cos(me.rotation + Math.PI / 2) * 20;
             let speed_y = Math.sin(me.rotation + Math.PI / 2) * 20;
             this.shot = true;
+            // socket = io()
             // Tell the server we shot a bullet
             socket.emit('shoot-bullet', {
                 x: me.x + 30,
@@ -84,7 +74,6 @@ player = {
         } else {
             me.alpha = 1;
         }
-
         // Tell the server we've moved
         socket.emit('move-player', { x: me.x, y: me.y, angle: me.rotation });
     }

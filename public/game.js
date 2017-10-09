@@ -14,31 +14,37 @@ let water_tiles = [];
 let bullet_array = [];
 let other_players = {};
 let done = false;
-let score;
-let scoreText;
+let health = 100;
+let healthText;
 let socket; //Declare it in this scope, initialize in the `create` function
 let sprite;
 let player;
+let zombie;
 let walls;
+let timer;
+let timeLabel;
+let gameTimer;
 
 function createSprite(type, x, y, angle) {
     // type is an int that can be between 1 and 6 inclusive
     // returns the sprite just created
     game.physics.startSystem(Phaser.Physics.P2JS);
-    // game.physics.p2.restitution = 0.8;
-
     sprite = game.add.sprite(x, y, 'person' + String(type) + '_' + type); //changed  "ship" to "person"    +    '_1 to type
-    sprite.fiction = 0.95;
-
+    sprite.friction = 0.95;
     sprite.rotation = angle;
     sprite.anchor.setTo(0.5, 0.5);
-
-    // sprite.body.setZeroDamping();
-    // sprite.body.fixedRotation = true;
-    // console.log('SPRITE', sprite)
     return sprite;
 }
-console.log(sprite);
+
+function createZombie(x, y, angle) {
+    game.physics.startSystem(Phaser.Physics.P2JS);
+    sprite = game.add.sprite(x, y, 'zombie'); 
+    sprite.friction = 0.95;
+    sprite.rotation = angle;
+    sprite.anchor.setTo(0.5, 0.5);
+    return sprite;
+}
+
 function preload() {
     game.load.crossOrigin = 'Anonymous';
     game.stage.backgroundColor = '#58da45'; //+++changed background color
@@ -61,7 +67,7 @@ function preload() {
             ASSET_URL + 'robot4_gun.png'
         );
     }
-
+    game.load.image('zombie', ASSET_URL + 'zombie.png')
     game.load.image('bullet', ASSET_URL + 'blue_beam.png');
     game.load.image('water', ASSET_URL + 'tile_06.png');
     game.load.image('wall', ASSET_URL + 'trak2_trim2b.png');
@@ -69,6 +75,8 @@ function preload() {
 
 function create() {
     game.physics.startSystem(Phaser.Physics.P2JS);
+    game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
+    game.stage.disableVisibilityChange = true;
     // game.physics.p2.restitution = 0.8;
 
     // Create tiles
@@ -81,11 +89,15 @@ function create() {
         }
     }
 
-    //SCORE
-    scoreText = game.add.text(16, 16, 'score:0', {
+    //Timer
+    // timer.create();
+
+    // health
+    healthText = game.add.text(16, 16, 'health: 100', {
         fontSize: '32px',
         fill: '#000'
     });
+
 
     // Walls
     let walls = game.add.group();
@@ -99,7 +111,7 @@ function create() {
     wall2.body.rotation = 1.5708;
     wall2.body.static = true;
 
-    // game.stage.disableVisibilityChange = true;
+ 
     // Create player
     let player_robot_type = String(1);
     player.sprite = game.add.sprite(
@@ -108,26 +120,36 @@ function create() {
         'person' + player_robot_type + '_1'
     );
     // player.sprite.anchor.setTo(0.5,0.5);
+    timeLabel = game.add.text(game.world.centerX, 100, "00:00", {font: "100px Arial", fill: "#fff"});
+    timeLabel.anchor.setTo(0.5, 0);
+    timeLabel.align = 'center';
+    gameTimer = game.time.events.loop(100, function(){
+        timer.update();
+    });
 
     game.physics.p2.enable(player.sprite);
     player.sprite.body.setZeroDamping();
     player.sprite.body.fixedRotation = true;
     player.sprite.body.setZeroVelocity();
-
-    game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
-    game.physics.startSystem(Phaser.Physics.P2JS);
-    // game.physics.p2.setImpactEvents(true)
     game.camera.follow = player.sprite;
-    // game.camera.y = player.sprite.y
-    // game.camera.target = player.sprite;
-    // console.log('CAMERA: ', game.camera.target)
+
+    // zombie.sprite = game.add.sprite(100, 100, 'zombie')
+    // game.physics.p2.enable(zombie.sprite);
+    // zombie.sprite.body.setZeroDamping();
+    // zombie.sprite.body.fixedRotation = true;
+    // zombie.sprite.body.setZeroVelocity();
+
+    console.log(player.sprite.x)
+    
     socket = io(); // This triggers the 'connection' event on the server
+    
     socket.emit('new-player', {
         x: player.sprite.x,
         y: player.sprite.y,
         angle: player.sprite.rotation,
         type: 1
     });
+
     // Listen for other players connecting
     socket.on('update-players', function(players_data) {
         let players_found = {};
@@ -186,34 +208,41 @@ function create() {
     });
 
     // Listen for any player hit events and make that player flash
-    socket.on('player-hit', function(id) {
-        incrementScore();
+    socket.on('player-hit', function(player_data) {
+        console.log(player_data)
+        let id = player_data.id
+        health = player_data.health
         if (id == socket.id) {
             //If this is you
             player.sprite.alpha = 0;
+            // healthText.text = 'health: ' + health;
         } else {
             setTimeout((done = true), 3000);
             other_players[id].alpha = 0;
-            // done = true;
         }
-    });
+        if (health < 0 && id == socket.id) {
+            player.sprite.destroy()
+            player.health = 100
+            console.log('player.health', player.health);
+            console.log('player', player);
+            //take out the bullets
+            for(let i=server_bullet_array.length;i<bullet_array.length;i++){
+                bullet_array[i].destroy();
+                // bullet_array.splice(i,1);
+                i--;
+            }
+            
+        } else if (health < 0 && id != socket.id) {
+            other_players[id].destroy()
+        }
 
-    socket.on('score', function(score) {
-        scoreText.text = 'Score: ' + score;
     });
-}
-
-// function doneTruer() {
-//     done = true
-// }
-function incrementScore() {
-    if (done) {
-        // scoreText.text = 'Score: ' + score;
-    }
 }
 
 function GameLoop() {
+    // timer.update()
     player.update();
+    // updateTimer()
     // Move camera with player
     let camera_x = player.sprite.x - WINDOW_WIDTH / 2;
     let camera_y = player.sprite.y - WINDOW_HEIGHT / 2;
@@ -244,18 +273,14 @@ function GameLoop() {
             p.rotation += dir * 0.16;
         }
     }
-    /* We're updating the bullets on the server, so we don't need to do this on the client anymore 
-                // Update bullets 
-                for(let i=0;i<bullet_array.length;i++){
-                    let bullet = bullet_array[i];
-                    bullet.sprite.x += bullet.speed_x; 
-                    bullet.sprite.y += bullet.speed_y; 
-                    // Remove if it goes too far off screen 
-                    if(bullet.sprite.x < -10 || bullet.sprite.x > WORLD_SIZE.w || bullet.sprite.y < -10 || bullet.sprite.y > WORLD_SIZE.h){
-                        bullet.sprite.destroy();
-                        bullet_array.splice(i,1);
-                        i--;
-                    }
-                } 
-                */
 }
+
+function createTimer() {
+            let me = this;
+            // timeLabel = game.add.text(game.world.centerX, 100, "00:00", {font: "100px Arial", fill: "#fff"});
+            // timeLabel.anchor.setTo(0.5, 0);
+            // timeLabel.align = 'center';
+}
+
+
+

@@ -20,13 +20,20 @@ http.listen(app.get('port'), function() {
 
 let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
-let score = 0; // Keeps track of all the bullets to update them on the server
+let health = 100; // Keeps track of all the bullets to update them on the server
+let zombies = {};
+let startTime = new Date();
+let time = startTime.getTime();
+
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
+    socket.emit('start-time', time)
+
     //Listen for new messages
     socket.on('chat message', function(msg) {
         io.emit('chat message', msg);
     });
+
     // Listen for a new player trying to connect
     socket.on('new-player', function(state) {
         console.log('New player joined with state:', state);
@@ -52,8 +59,12 @@ io.on('connection', function(socket) {
 
     // Listen for shoot-bullet events and add it to our bullet array
     socket.on('shoot-bullet', function(data) {
-        if (players[socket.id] == undefined) return;
+        if (players[socket.id] == undefined) {
+            console.log('hii')
+            return;
+        }
         let new_bullet = data;
+        console.log('bullet', new_bullet)
         data.owner_id = socket.id; // Attach id of the player to the bullet
         if (Math.abs(data.speed_x) > 20 || Math.abs(data.speed_y) > 20) {
             console.log('Player', socket.id, 'is cheating!');
@@ -64,11 +75,12 @@ io.on('connection', function(socket) {
 
 // Update the bullets 60 times per frame and send updates
 function ServerGameLoop() {
+ 
     for (let i = 0; i < bullet_array.length; i++) {
         let bullet = bullet_array[i];
         bullet.x += bullet.speed_x;
         bullet.y += bullet.speed_y;
-
+        console.log('heyy')
         // Check if this bullet is close enough to hit any player
         for (let id in players) {
             if (bullet.owner_id != id) {
@@ -77,13 +89,12 @@ function ServerGameLoop() {
                 let dy = players[id].y - bullet.y;
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 70) {
-                    io.emit('player-hit', id); // Tell everyone this player got hit
+                    health--
+                    io.emit('player-hit', {id, health}); // Tell everyone this player got hit
                 }
-                if ((dist = 30)) {
-                    console.log('hiii');
-                    score++;
-                    io.emit('score', score);
-                }
+                // if (health < 0) {
+
+                // }
             }
         }
 
