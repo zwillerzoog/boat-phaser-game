@@ -1,6 +1,3 @@
-// function () {
-
-// }
 
 player = {
     sprite: null, //Will hold the sprite when it's created

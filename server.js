@@ -21,7 +21,9 @@ http.listen(app.get('port'), function() {
 let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
 let health = 100; // Keeps track of all the bullets to update them on the server
-let zombies = {}
+let zombies = {};
+let time;
+let startTime = new Date()
 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
@@ -36,6 +38,9 @@ io.on('connection', function(socket) {
         // Broadcast a signal to everyone containing the updated players list
         io.emit('update-players', players);
     });
+    time = startTime.getTime()
+    console.log('time', time)
+    socket.emit('start-time', time)
     
     socket.on('new-zombie', function(zombie_state) {
         zombies = zombie_state
