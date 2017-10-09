@@ -1,5 +1,6 @@
 'use strict';
-let game = new Phaser.Game(800, 600, Phaser.AUTO, 'game'), Main = function () {};
+// let game = new Phaser.Game(800, 600, Phaser.AUTO, 'game'), Main = function () {};
+let Main = function () {};
 
 Main.prototype = {
 
