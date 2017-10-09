@@ -65,6 +65,7 @@ player = {
             let speed_x = Math.cos(me.rotation + Math.PI / 2) * 20;
             let speed_y = Math.sin(me.rotation + Math.PI / 2) * 20;
             this.shot = true;
+            // socket = io()
             // Tell the server we shot a bullet
             socket.emit('shoot-bullet', {
                 x: me.x + 30,

@@ -14,7 +14,7 @@ canvas {
 #chatbox {
     position:fixed;
     border: 1px solid black;
-    left: 65%;
+    left: 900px;
     top: 50px;
     bottom: 0;
     height: 500px;
@@ -42,8 +42,6 @@ form button {
     border: 1px solid black; 
     padding: 10px; 
 }
-
-
 
 #messages { 
     

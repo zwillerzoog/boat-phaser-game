@@ -12,6 +12,7 @@ timer = {
         socket.on('start-time', function(startTime) {
            let me = this;
            let currentTime = new Date();
+        //    console.log(currentTime)
            let timeDifference = startTime - currentTime.getTime();
             // console.log(timeDifference)
            //Time elapsed in seconds

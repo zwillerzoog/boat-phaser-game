@@ -22,15 +22,18 @@ let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
 let health = 100; // Keeps track of all the bullets to update them on the server
 let zombies = {};
-let time;
-let startTime = new Date()
+let startTime = new Date();
+let time = startTime.getTime();
 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
+    socket.emit('start-time', time)
+
     //Listen for new messages
     socket.on('chat message', function(msg) {
         io.emit('chat message', msg);
     });
+
     // Listen for a new player trying to connect
     socket.on('new-player', function(state) {
         console.log('New player joined with state:', state);
@@ -38,9 +41,6 @@ io.on('connection', function(socket) {
         // Broadcast a signal to everyone containing the updated players list
         io.emit('update-players', players);
     });
-    time = startTime.getTime()
-    console.log('time', time)
-    socket.emit('start-time', time)
     
     socket.on('new-zombie', function(zombie_state) {
         zombies = zombie_state
@@ -62,23 +62,11 @@ io.on('connection', function(socket) {
         io.emit('update-players', players);
     });
 
-    socket.on('move-zombie', function(position_data) {
-        if (zombies[socket.id] == undefined) return; // Happens if the server restarts and a client is still connected
-        zombies[socket.id].x = position_data.x;
-        zombies[socket.id].y = position_data.y;
-        zombies[socket.id].angle = position_data.angle;
-        io.emit('update-zombies', zombies);
-    });
-
-    // socket.on('zombie-movements', function(zombie_positions) {
-
-    //     console.log('positionsss', zombie_positions)
-    //     io.emit('update-zombies', [zombie0, zombie1, zombie2])
-    // })
     // Listen for shoot-bullet events and add it to our bullet array
     socket.on('shoot-bullet', function(data) {
         if (players[socket.id] == undefined) return;
         let new_bullet = data;
+        console.log('bullet', new_bullet)
         data.owner_id = socket.id; // Attach id of the player to the bullet
         if (Math.abs(data.speed_x) > 20 || Math.abs(data.speed_y) > 20) {
             console.log('Player', socket.id, 'is cheating!');
@@ -89,11 +77,12 @@ io.on('connection', function(socket) {
 
 // Update the bullets 60 times per frame and send updates
 function ServerGameLoop() {
+ 
     for (let i = 0; i < bullet_array.length; i++) {
         let bullet = bullet_array[i];
         bullet.x += bullet.speed_x;
         bullet.y += bullet.speed_y;
-
+        console.log('heyy')
         // Check if this bullet is close enough to hit any player
         for (let id in players) {
             if (bullet.owner_id != id) {
