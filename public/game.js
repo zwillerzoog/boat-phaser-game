@@ -148,12 +148,9 @@ function create() {
         type: 1
     });
 
-    // //create zombies
-    zombie.create();
-
     // Listen for other players connecting
     socket.on('update-players', function(players_data) {
-        
+        console.log(players_data)
         let players_found = {};
         // Loop over all the player data received
         for (let id in players_data) {

@@ -41,11 +41,6 @@ io.on('connection', function(socket) {
         // Broadcast a signal to everyone containing the updated players list
         io.emit('update-players', players);
     });
-    
-    socket.on('new-zombie', function(zombie_state) {
-        zombies = zombie_state
-        io.emit('update-zombies', zombies)
-    })
 
     // Listen for a disconnection and update our player table
     socket.on('disconnect', function(state) {
@@ -64,7 +59,10 @@ io.on('connection', function(socket) {
 
     // Listen for shoot-bullet events and add it to our bullet array
     socket.on('shoot-bullet', function(data) {
-        if (players[socket.id] == undefined) return;
+        if (players[socket.id] == undefined) {
+            console.log('hii')
+            return;
+        }
         let new_bullet = data;
         console.log('bullet', new_bullet)
         data.owner_id = socket.id; // Attach id of the player to the bullet
