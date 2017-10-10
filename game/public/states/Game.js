@@ -177,7 +177,7 @@ Game.prototype = {
         if (other_players[id] == undefined && id != socket.id) {
           // Make sure you don't create yourself
           let data = players_data[id];
-          let p = this.createSprite(data.type, data.x, data.y, data.angle);
+          let p = Game.prototype.createSprite(data.type, data.x, data.y, data.angle);
           other_players[id] = p;
           console.log(
             'Created new player at (' + data.x + ', ' + data.y + ')'
