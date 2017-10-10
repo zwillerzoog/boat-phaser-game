@@ -17,6 +17,7 @@ let done = false;
 let health = 100;
 let healthText;
 let socket; //Declare it in this scope, initialize in the `create` function
+let enemy;
 let sprite;
 let player;
 let zombie;
@@ -25,25 +26,25 @@ let chat;
 let timer;
 let timeLabel;
 let gameTimer;
-
+//'person' + String(type) + '_' + type
 function createSprite(type, x, y, angle) {
   // type is an int that can be between 1 and 6 inclusive
   // returns the sprite just created
   game.physics.startSystem(Phaser.Physics.P2JS);
-  sprite = game.add.sprite(x, y, 'person' + String(type) + '_' + type); //changed  "ship" to "person"    +    '_1 to type
-  sprite.friction = 0.95;
-  sprite.rotation = angle;
-  sprite.anchor.setTo(0.5, 0.5);
-  return sprite;
+  enemy = game.add.sprite(x, y, 'whatever'); //changed  "ship" to "person"    +    '_1 to type
+  enemy.friction = 0.95;
+  enemy.rotation = angle;
+  enemy.anchor.setTo(0.5, 0.5);
+  return enemy;
 }
 
 function createZombie(x, y, angle) {
   game.physics.startSystem(Phaser.Physics.P2JS);
-  sprite = game.add.sprite(x, y, 'zombie');
-  sprite.friction = 0.95;
-  sprite.rotation = angle;
-  sprite.anchor.setTo(0.5, 0.5);
-  return sprite;
+  enemy = game.add.sprite(x, y, 'zombie');
+  enemy.friction = 0.95;
+  enemy.rotation = angle;
+  enemy.anchor.setTo(0.5, 0.5);
+  return enemy;
 }
 
 function preload() {
@@ -59,6 +60,7 @@ function preload() {
     game.load.image('person' + String(i) + '_3', ASSET_URL + 'robot3_gun.png');
     game.load.image('person' + String(i) + '_4', ASSET_URL + 'robot4_gun.png');
   }
+  game.load.image('whatever', ASSET_URL + 'red_beam.png')
   game.load.image('zombie', ASSET_URL + 'zombie.png');
   game.load.image('bullet', ASSET_URL + 'blue_beam.png');
   game.load.image('water', ASSET_URL + 'tile_06.png');
@@ -83,8 +85,6 @@ function create() {
   socket = io()
 
   chat()
-
-
   // health
   healthText = game.add.text(16, 16, 'health: 100', {
     fontSize: '32px',
@@ -108,7 +108,8 @@ function create() {
   player.sprite = game.add.sprite(
     Math.random() * WORLD_SIZE.w / 2 + WORLD_SIZE.w / 2,
     Math.random() * WORLD_SIZE.h / 2 + WORLD_SIZE.h / 2,
-    'person' + player_robot_type + '_1'
+    'whatever'
+    //'person' + player_robot_type + '_1'
   );
   // player.sprite.anchor.setTo(0.5,0.5);
 
@@ -117,17 +118,17 @@ function create() {
   player.sprite.body.fixedRotation = true;
   player.sprite.body.setZeroVelocity();
   game.camera.follow = player.sprite;
-console.log('XX=', player.sprite)
+// console.log('XX=', player.sprite.x)
   // zombie.sprite = game.add.sprite(100, 100, 'zombie')
   // game.physics.p2.enable(zombie.sprite);
   // zombie.sprite.body.setZeroDamping();
   // zombie.sprite.body.fixedRotation = true;
   // zombie.sprite.body.setZeroVelocity();
 
-  socket = io(); // This triggers the 'connection' event on the server
+//   socket = io(); // This triggers the 'connection' event on the server
     Client.initListeners()
     Client.newPlayer(player.sprite.x, player.sprite.y, player.sprite.rotation)
-    Client.movePlayer(player.sprite.x, player.sprite.y, player.sprite.rotation)
+    
 
 //   socket.emit('new-player', {
 //     x: player.sprite.x,
@@ -223,8 +224,9 @@ console.log('XX=', player.sprite)
 
 function GameLoop() {
   player.update();
+//   console.log('ROTATION', player.sprite.rotation)
   // updateTimer()
-
+  Client.movePlayer(player.sprite.x, player.sprite.y, player.sprite.rotation)
   // Move camera with player
   let camera_x = player.sprite.x - WINDOW_WIDTH / 2;
   let camera_y = player.sprite.y - WINDOW_HEIGHT / 2;

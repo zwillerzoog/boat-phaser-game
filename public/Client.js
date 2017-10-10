@@ -4,14 +4,17 @@ const Client = {
     zombieManager: false,
     newPlayer: function(x,y,angle){
         this.socket.emit('new-player', {
-            x,
-            y,
-            angle,
-            type: 1
+            x: player.sprite.x,
+            y: player.sprite.y,
+            angle: player.sprite.rotation
         });
     },
-    movePlayer: function(x, y, rotation){
-        this.socket.emit('move-player', {x, y, rotation});
+    movePlayer: function(x, y, angle){
+        this.socket.emit('move-player', {
+            x: player.sprite.x,
+            y: player.sprite.y,
+            angle: player.sprite.rotation
+        });
     },
     shootBeam: function(x, y, angle, velocity){
         this.socket.emit('shot', {x, y, angle, velocity});
@@ -28,8 +31,9 @@ const Client = {
         // this.socket.on('newplayer', function(player){
         //     console.log('add', player);
         // });
+        
         this.socket.on('update-players', function(players_data) {
-            console.log('players_data', players_data);
+            // console.log('players_data', players_data);
             let players_found = {};
             // Loop over all the player data received
             for (let id in players_data) {

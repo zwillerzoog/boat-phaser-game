@@ -23,7 +23,7 @@ player = {
         ) {
             me.body.moveUp(200);
             me.rotation = 3.1;
-            // console.log('BODYX', me.x)
+            // console.log('BODYX', player.sprite.x)
         }
 
         //turn right
