@@ -46,8 +46,10 @@ io.on('connection', function(socket) {
     socket.on('new-player', function(state) {
         console.log('New player joined with state:', state);
         players[socket.id] = state;
+
+        console.log('socket', socket.id)
         // Broadcast a signal to everyone containing the updated players list
-        socket.broadcast.emit('update-players', players);
+        io.emit('update-players', players);
     });
 
     // Listen for a disconnection and update our player table

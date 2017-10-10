@@ -169,28 +169,28 @@ function create() {
 //   });
 
   // Listen for bullet update events
-  socket.on('bullets-update', function(server_bullet_array) {
-    // If there's not enough bullets on the client, create them
-    for (let i = 0; i < server_bullet_array.length; i++) {
-      if (bullet_array[i] == undefined) {
-        bullet_array[i] = game.add.sprite(
-          server_bullet_array[i].x,
-          server_bullet_array[i].y,
-          'bullet'
-        );
-      } else {
-        //Otherwise, just update it!
-        bullet_array[i].x = server_bullet_array[i].x;
-        bullet_array[i].y = server_bullet_array[i].y;
-      }
-    }
-    // Otherwise if there's too many, delete the extra
-    for (let i = server_bullet_array.length; i < bullet_array.length; i++) {
-      bullet_array[i].destroy();
-      bullet_array.splice(i, 1);
-      i--;
-    }
-  });
+//   socket.on('bullets-update', function(server_bullet_array) {
+//     // If there's not enough bullets on the client, create them
+//     for (let i = 0; i < server_bullet_array.length; i++) {
+//       if (bullet_array[i] == undefined) {
+//         bullet_array[i] = game.add.sprite(
+//           server_bullet_array[i].x,
+//           server_bullet_array[i].y,
+//           'bullet'
+//         );
+//       } else {
+//         //Otherwise, just update it!
+//         bullet_array[i].x = server_bullet_array[i].x;
+//         bullet_array[i].y = server_bullet_array[i].y;
+//       }
+//     }
+//     // Otherwise if there's too many, delete the extra
+//     for (let i = server_bullet_array.length; i < bullet_array.length; i++) {
+//       bullet_array[i].destroy();
+//       bullet_array.splice(i, 1);
+//       i--;
+//     }
+//   });
 
   // Listen for any player hit events and make that player flash
   socket.on('player-hit', function(player_data) {

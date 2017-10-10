@@ -28,17 +28,17 @@ const Client = {
         }
     },
     initListeners: function(){
-        // this.socket.on('newplayer', function(player){
-        //     console.log('add', player);
-        // });
-        
+       let socketID = this.socket.id
+
         this.socket.on('update-players', function(players_data) {
             // console.log('players_data', players_data);
             let players_found = {};
             // Loop over all the player data received
             for (let id in players_data) {
+                // console.log('id', id)
+                
               // If the player hasn't been created yet
-              if (other_players[id] == undefined && id != socket.id) {
+              if (other_players[id] == undefined && id != socketID) {
                 // Make sure you don't create yourself
                 let data = players_data[id];
                 let p = createSprite(data.type, data.x, data.y, data.angle);
@@ -48,7 +48,7 @@ const Client = {
               players_found[id] = true;
         
               // Update positions of other players
-              if (id != socket.id) {
+              if (id != socketID) {
                 other_players[id].target_x = players_data[id].x; // Update target, not actual position, so we can interpolate
                 other_players[id].target_y = players_data[id].y;
                 other_players[id].target_rotation = players_data[id].angle;
@@ -67,7 +67,7 @@ const Client = {
             console.log(player_data);
             let id = player_data.id;
             health = player_data.health;
-            if (id == socket.id) {
+            if (id == socketID) {
               //If this is you
               player.sprite.alpha = 0;
               healthText.text = 'health: ' + health;
@@ -75,7 +75,7 @@ const Client = {
               setTimeout((done = true), 3000);
               other_players[id].alpha = 0;
             }
-            if (health < 0 && id == socket.id) {
+            if (health < 0 && id == socketID) {
               player.sprite.destroy();
               player.health = 100;
               console.log('player.health', player.health);
@@ -91,9 +91,28 @@ const Client = {
             }
           });
         
-        this.socket.on('allbullets', function(bullets){
-            console.log('create game bullets with', bullets);
-        });
+        this.socket.on('bullets-update', function(server_bullet_array) {
+            // If there's not enough bullets on the client, create them
+            for (let i = 0; i < server_bullet_array.length; i++) {
+              if (bullet_array[i] == undefined) {
+                bullet_array[i] = game.add.sprite(
+                  server_bullet_array[i].x,
+                  server_bullet_array[i].y,
+                  'bullet'
+                );
+              } else {
+                //Otherwise, just update it!
+                bullet_array[i].x = server_bullet_array[i].x;
+                bullet_array[i].y = server_bullet_array[i].y;
+              }
+            }
+            // Otherwise if there's too many, delete the extra
+            for (let i = server_bullet_array.length; i < bullet_array.length; i++) {
+              bullet_array[i].destroy();
+              bullet_array.splice(i, 1);
+              i--;
+            }
+          });
         this.socket.on('allzombies', function(zombies){
             console.log('create game zombies with', zombies);
         });
