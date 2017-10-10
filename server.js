@@ -27,8 +27,17 @@ let time;
 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
+    console.log(Object.keys(io.sockets.connected).length)
     time = startTime.getTime();
+
+    // if(!time) {
+    //     time = new Date().getTime()
+    // }
+    
+    // console.log('TIME', time)
     socket.emit('start-time', time)
+    
+    
 
     //Listen for new messages
     socket.on('chat message', function(msg) {

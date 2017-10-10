@@ -21,7 +21,7 @@ let sprite;
 let player;
 let zombie;
 let walls;
-
+let Client;
 let timer;
 let timeLabel;
 let gameTimer;
@@ -80,7 +80,7 @@ function create() {
       water_tiles.push(tile_sprite);
     }
   }
-
+  socket = io()
   //Timer
   totalTime = 120;
   timeElapsed = 0;
@@ -90,36 +90,44 @@ function create() {
   });
   timeLabel.anchor.setTo(0.5, 0);
   timeLabel.align = 'center';
-  gameTimer = game.time.events.loop(100, function() {
+//   gameTimer = game.time.events.loop(100, function() {})
     //Timer
+
+    
     socket.on('start-time', function(startTime) {
-      // console.log('hiee')
-      var me = this;
+      console.log(startTime)
+ 
+      setInterval(() => {
 
-      var currentTime = new Date();
-      var timeDifference = startTime - currentTime.getTime();
-      //    console.log('timeDifference', timeDifference);
+        var currentTime = new Date();
+        var timeDifference = startTime - currentTime.getTime();
+            //  console.log('timeDifference', timeDifference);
 
-      //Time elapsed in seconds
-      timeElapsed = Math.abs(timeDifference / 1000);
+        //Time elapsed in seconds
+        timeElapsed = Math.abs(timeDifference / 1000);
 
-      //Time remaining in seconds
-      var timeRemaining = timeElapsed;
-      //    console.log('timeRemaining', timeRemaining);
+        //Time remaining in seconds
+        var timeRemaining = timeElapsed;
+        //    console.log('timeRemaining', timeRemaining);
 
-      //Convert seconds into minutes and seconds
-      var minutes = Math.floor(timeRemaining / 60);
-      var seconds = Math.floor(timeRemaining) - 60 * minutes;
+        //Convert seconds into minutes and seconds
+        var minutes = Math.floor(timeRemaining / 60);
+        var seconds = Math.floor(timeRemaining) - 60 * minutes;
 
-      //Display minutes, add a 0 to the start if less than 10
-      var result = minutes < 10 ? '0' + minutes : minutes;
-      // console.log(result)
-      //Display seconds, add a 0 to the start if less than 10
-      result += seconds < 10 ? ':0' + seconds : ':' + seconds;
+        //Display minutes, add a 0 to the start if less than 10
+        var result = minutes < 10 ? '0' + minutes : minutes;
+        //   console.log(minutes, seconds)
+        // console.log(result)
+        //Display seconds, add a 0 to the start if less than 10
+        result += seconds < 10 ? ':0' + seconds : ':' + seconds;
+            // console.log("res", result)
+        timeLabel.text = result;
 
-      timeLabel.text = result;
+        }, 1000)
     });
-  });
+  
+
+
   console.log(gameTimer);
   // health
   healthText = game.add.text(16, 16, 'health: 100', {
@@ -161,8 +169,8 @@ function create() {
   // zombie.sprite.body.setZeroVelocity();
 
   console.log(player.sprite.x);
-
-  socket = io(); // This triggers the 'connection' event on the server
+  Client.socket
+//   socket = io(); // This triggers the 'connection' event on the server
 
   socket.emit('new-player', {
     x: player.sprite.x,
