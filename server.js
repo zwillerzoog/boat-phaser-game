@@ -23,10 +23,11 @@ let bullet_array = [];
 let health = 100; // Keeps track of all the bullets to update them on the server
 let zombies = {};
 let startTime = new Date();
-let time = startTime.getTime();
+let time;
 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
+    time = startTime.getTime();
     socket.emit('start-time', time)
 
     //Listen for new messages
@@ -80,7 +81,6 @@ function ServerGameLoop() {
         let bullet = bullet_array[i];
         bullet.x += bullet.speed_x;
         bullet.y += bullet.speed_y;
-        console.log('heyy')
         // Check if this bullet is close enough to hit any player
         for (let id in players) {
             if (bullet.owner_id != id) {
