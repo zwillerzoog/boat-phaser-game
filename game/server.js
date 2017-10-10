@@ -9,7 +9,7 @@ const io = require('socket.io')(http); // Here's where we include socket.io as a
 // });
 
 // Serve the assets directory
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use('/assets', express.static('assets'));
 
 // Listen on port 5000

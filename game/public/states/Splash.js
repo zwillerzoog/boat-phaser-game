@@ -12,7 +12,6 @@ Splash.prototype = {
     game.load.script('gameover','states/GameOver.js');
     game.load.script('credits', 'states/Credits.js');
     game.load.script('options', 'states/Options.js');
-    console.log("game!!!!!!!", game)
   },
 
   loadBgm: function () {
@@ -22,7 +21,7 @@ Splash.prototype = {
   },
   // varios freebies found from google image search
   loadImages: function () {
-    game.load.image('mainmenu-bg', './assets/images/mainmenu-bg.png');
+    game.load.image('mainmenu-bg', 'assets/images/mainmenu-bg.png');
     game.load.image('options-bg', 'assets/images/options-bg.jpg');
     game.load.image('gameover-bg', 'assets/images/gameover-bg.png');
   },

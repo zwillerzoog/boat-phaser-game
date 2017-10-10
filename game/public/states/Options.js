@@ -30,10 +30,10 @@ Options.prototype = {
     //   target.text = playMusic ? 'Mute Music' : 'Play Music';
     //   musicPlayer.volume = playMusic ? 1 : 0;
     // });
-    this.addMenuOption(playSound ? 'Mute Sound' : 'Play Sound', function (target) {
-      playSound = !playSound;
-      target.text = playSound ? 'Mute Sound' : 'Play Sound';
-    });
+    // this.addMenuOption(playSound ? 'Mute Sound' : 'Play Sound', function (target) {
+    //   playSound = !playSound;
+    //   target.text = playSound ? 'Mute Sound' : 'Play Sound';
+    // });
     this.addMenuOption('<- Back', function () {
       game.state.start("GameMenu");
     });
