@@ -23,6 +23,7 @@ player = {
         ) {
             me.body.moveUp(200);
             me.rotation = 3.1;
+            // console.log('BODYX', me.x)
         }
 
         //turn right
@@ -75,6 +76,6 @@ player = {
             me.alpha = 1;
         }
         // Tell the server we've moved
-        socket.emit('move-player', { x: me.x, y: me.y, angle: me.rotation });
+        // socket.emit('move-player', { x: me.x, y: me.y, angle: me.rotation });
     }
 };

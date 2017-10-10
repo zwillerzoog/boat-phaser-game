@@ -21,7 +21,7 @@ let sprite;
 let player;
 let zombie;
 let walls;
-let Client;
+let chat;
 let timer;
 let timeLabel;
 let gameTimer;
@@ -81,54 +81,10 @@ function create() {
     }
   }
   socket = io()
-  //Timer
-  totalTime = 120;
-  timeElapsed = 0;
-  timeLabel = game.add.text(game.world.centerX, 100, '00:00', {
-    font: '100px Arial',
-    fill: '#fff'
-  });
-  timeLabel.anchor.setTo(0.5, 0);
-  timeLabel.align = 'center';
-//   gameTimer = game.time.events.loop(100, function() {})
-    //Timer
 
-    
-    socket.on('start-time', function(startTime) {
-      console.log(startTime)
- 
-      setInterval(() => {
-
-        var currentTime = new Date();
-        var timeDifference = startTime - currentTime.getTime();
-            //  console.log('timeDifference', timeDifference);
-
-        //Time elapsed in seconds
-        timeElapsed = Math.abs(timeDifference / 1000);
-
-        //Time remaining in seconds
-        var timeRemaining = timeElapsed;
-        //    console.log('timeRemaining', timeRemaining);
-
-        //Convert seconds into minutes and seconds
-        var minutes = Math.floor(timeRemaining / 60);
-        var seconds = Math.floor(timeRemaining) - 60 * minutes;
-
-        //Display minutes, add a 0 to the start if less than 10
-        var result = minutes < 10 ? '0' + minutes : minutes;
-        //   console.log(minutes, seconds)
-        // console.log(result)
-        //Display seconds, add a 0 to the start if less than 10
-        result += seconds < 10 ? ':0' + seconds : ':' + seconds;
-            // console.log("res", result)
-        timeLabel.text = result;
-
-        }, 1000)
-    });
-  
+  chat()
 
 
-  console.log(gameTimer);
   // health
   healthText = game.add.text(16, 16, 'health: 100', {
     fontSize: '32px',
@@ -161,54 +117,55 @@ function create() {
   player.sprite.body.fixedRotation = true;
   player.sprite.body.setZeroVelocity();
   game.camera.follow = player.sprite;
-
+console.log('XX=', player.sprite)
   // zombie.sprite = game.add.sprite(100, 100, 'zombie')
   // game.physics.p2.enable(zombie.sprite);
   // zombie.sprite.body.setZeroDamping();
   // zombie.sprite.body.fixedRotation = true;
   // zombie.sprite.body.setZeroVelocity();
 
-  console.log(player.sprite.x);
-  Client.socket
-//   socket = io(); // This triggers the 'connection' event on the server
+  socket = io(); // This triggers the 'connection' event on the server
+    Client.initListeners()
+    Client.newPlayer(player.sprite.x, player.sprite.y, player.sprite.rotation)
+    Client.movePlayer(player.sprite.x, player.sprite.y, player.sprite.rotation)
 
-  socket.emit('new-player', {
-    x: player.sprite.x,
-    y: player.sprite.y,
-    angle: player.sprite.rotation,
-    type: 1
-  });
+//   socket.emit('new-player', {
+//     x: player.sprite.x,
+//     y: player.sprite.y,
+//     angle: player.sprite.rotation,
+//     type: 1
+//   });
 
   // Listen for other players connecting
-  socket.on('update-players', function(players_data) {
-    let players_found = {};
-    // Loop over all the player data received
-    for (let id in players_data) {
-      // If the player hasn't been created yet
-      if (other_players[id] == undefined && id != socket.id) {
-        // Make sure you don't create yourself
-        let data = players_data[id];
-        let p = createSprite(data.type, data.x, data.y, data.angle);
-        other_players[id] = p;
-        console.log('Created new player at (' + data.x + ', ' + data.y + ')');
-      }
-      players_found[id] = true;
+//   socket.on('update-players', function(players_data) {
+//     let players_found = {};
+//     // Loop over all the player data received
+//     for (let id in players_data) {
+//       // If the player hasn't been created yet
+//       if (other_players[id] == undefined && id != socket.id) {
+//         // Make sure you don't create yourself
+//         let data = players_data[id];
+//         let p = createSprite(data.type, data.x, data.y, data.angle);
+//         other_players[id] = p;
+//         console.log('Created new player at (' + data.x + ', ' + data.y + ')');
+//       }
+//       players_found[id] = true;
 
-      // Update positions of other players
-      if (id != socket.id) {
-        other_players[id].target_x = players_data[id].x; // Update target, not actual position, so we can interpolate
-        other_players[id].target_y = players_data[id].y;
-        other_players[id].target_rotation = players_data[id].angle;
-      }
-    }
-    // Check if a player is missing and delete them
-    for (let id in other_players) {
-      if (!players_found[id]) {
-        other_players[id].destroy();
-        delete other_players[id];
-      }
-    }
-  });
+//       // Update positions of other players
+//       if (id != socket.id) {
+//         other_players[id].target_x = players_data[id].x; // Update target, not actual position, so we can interpolate
+//         other_players[id].target_y = players_data[id].y;
+//         other_players[id].target_rotation = players_data[id].angle;
+//       }
+//     }
+//     // Check if a player is missing and delete them
+//     for (let id in other_players) {
+//       if (!players_found[id]) {
+//         other_players[id].destroy();
+//         delete other_players[id];
+//       }
+//     }
+//   });
 
   // Listen for bullet update events
   socket.on('bullets-update', function(server_bullet_array) {

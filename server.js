@@ -27,7 +27,7 @@ let time;
 
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
-    console.log(Object.keys(io.sockets.connected).length)
+    // console.log(Object.keys(io.sockets.connected).length)
     time = startTime.getTime();
 
     // if(!time) {
@@ -35,9 +35,7 @@ io.on('connection', function(socket) {
     // }
     
     // console.log('TIME', time)
-    socket.emit('start-time', time)
-    
-    
+    // socket.emit('start-time', time)
 
     //Listen for new messages
     socket.on('chat message', function(msg) {
@@ -60,6 +58,7 @@ io.on('connection', function(socket) {
 
     // Listen for move events and tell all other clients that something has moved
     socket.on('move-player', function(position_data) {
+        console.log('POSSS', position_data)
         if (players[socket.id] == undefined) return; // Happens if the server restarts and a client is still connected
         players[socket.id].x = position_data.x;
         players[socket.id].y = position_data.y;
