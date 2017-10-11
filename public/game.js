@@ -39,8 +39,6 @@ function createSprite(type, x, y, angle) {
     sprite.rotation = angle;
     sprite.anchor.setTo(0.5, 0.5);
 
-    sprite.body.setCollisionGroup(playerCollisionGroup);
-
     return sprite;
 }
 
@@ -131,6 +129,7 @@ function create() {
     // player.sprite.anchor.setTo(0.5,0.5);
 
     game.physics.p2.enable(player.sprite);
+    player.sprite.body.setCollisionGroup(playerCollisionGroup);
     player.sprite.body.setZeroDamping();
     player.sprite.body.fixedRotation = true;
     player.sprite.body.setZeroVelocity();
@@ -309,7 +308,9 @@ function GameLoop() {
     // Collision behavior
     wall1.body.collides(laserCollisionGroup, laserCollisionHandler, this);
     wall2.body.collides(laserCollisionGroup, laserCollisionHandler, this);
-    player.sprite.body.collides(laserCollisionGroup);
+    wall1.body.collides(playerCollisionGroup);
+    wall2.body.collides(playerCollisionGroup);
+    player.sprite.body.collides(wallCollisionGroup);
 }
 
 function laserCollisionHandler(wallBody, laserBody) {
