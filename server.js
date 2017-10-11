@@ -22,9 +22,9 @@ let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
 let health = 100; // Keeps track of all the bullets to update them on the server
 let zombies = {};
-let gameZombies;
+let gameZombies = [];
 let zombieManager;
-let ID;
+let ID; //CHECK THIS LATER
 let zombieState;
 let socketArray =  Object.keys(io.sockets.connected)
 
@@ -61,11 +61,17 @@ io.on('connection', function(socket) {
   socket.emit('zombie-manager', {zombieManager, ID, gameZombies});
   
 
-  socket.on('first-zombie', function(zombie_state) {
+  socket.on('zombie-movement', function(zombie_state) {
       zombieState = zombie_state;
+    //   console.log(zombieState)
+      io.emit('update-zombies', {ID, zombieState});
   });
-  console.log('zombieState', zombieState);
-  io.emit('update-zombies', {ID, zombieState});
+
+  socket.on('create-zombie', function(zombie_position) {
+      let ID = Object.keys(io.sockets.connected)[0];
+      io.emit('zombie-start', {zombie_position, ID})
+  })
+
 
   // Listen for a disconnection and update our player table
   socket.on('disconnect', function(state) {
@@ -88,13 +94,14 @@ io.on('connection', function(socket) {
     io.emit('update-players', players);
   });
 
-  socket.on('move-zombie', function(position_data) {
-    if (zombies[socket.id] == undefined) return; // Happens if the server restarts and a client is still connected
-    zombies[socket.id].x = position_data.x;
-    zombies[socket.id].y = position_data.y;
-    zombies[socket.id].angle = position_data.angle;
-    io.emit('update-zombies', zombies);
-  });
+//   socket.on('move-zombie', function(position_data) {
+//     // if (zombies[socket.id] == undefined) return; // Happens if the server restarts and a client is still connected
+//     console.log('POSITION', position_data)
+//     zombies.x = position_data.x;
+//     zombies.y = position_data.y;
+//     zombies[socket.id].angle = position_data.angle;
+//     io.emit('update-zombies', zombies);
+//   });
 
   // socket.on('zombie-movements', function(zombie_positions) {
 
@@ -115,7 +122,7 @@ io.on('connection', function(socket) {
 
 // Update the bullets 60 times per frame and send updates
 function ServerGameLoop() {
-
+    // console.log('gameZOMBBB', gameZombies)
     // if (socketArray != Object.keys(io.sockets.connected)) {
     //     console.log('yuppp')
     //     socketArray = Object.keys(io.sockets.connected);
