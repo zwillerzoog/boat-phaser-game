@@ -73,6 +73,7 @@ function preload() {
 }
 
 function create() {
+    game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
 
@@ -134,8 +135,8 @@ function create() {
     player.sprite.body.fixedRotation = true;
     player.sprite.body.setZeroVelocity();
 
-    game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
-    game.physics.startSystem(Phaser.Physics.P2JS);
+    // allows for things to stay within world bounds
+    game.physics.p2.updateBoundsCollisionGroup();
 
     game.camera.follow = player.sprite;
     socket = io(); // This triggers the 'connection' event on the server
@@ -225,22 +226,22 @@ function shootLaser() {
 
     // robot facing east
     if (player.sprite.rotation === 4.71239) {
-        createLaser(30, 10, 300, 0, 1.5708);
+        createLaser(30, 10, 550, 0, 1.5708);
     }
 
     // robot facing south
     if (player.sprite.rotation === 0) {
-        createLaser(-10, 30, 0, 300, 0);
+        createLaser(-10, 30, 0, 550, 0);
     }
 
     // robot facing west
     if (player.sprite.rotation === 1.5708) {
-        createLaser(-30, -10, -300, 0, 1.5708);
+        createLaser(-30, -10, -550, 0, 1.5708);
     }
 
     // robot facing north
     if (player.sprite.rotation === 3.14159) {
-        createLaser(10, -30, 0, -300, 0);
+        createLaser(10, -30, 0, -550, 0);
     }
 
     laser.scale.setTo(0.6, 0.75);
@@ -255,6 +256,7 @@ function createLaser(xOffset, yOffset, xVelocity, yVelocity, rotationRadians) {
         'laser'
     );
     game.physics.p2.enable(laser);
+    laser.body.collideWorldBounds = false;
     laser.body.velocity.x = xVelocity;
     laser.body.velocity.y = yVelocity;
     laser.body.rotation = rotationRadians;
