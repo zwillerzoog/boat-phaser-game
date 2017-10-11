@@ -11,7 +11,7 @@ Main.prototype = {
   preload: function () {
     game.load.image('load-bg',    './assets/images/load-bg.jpg');
     game.load.image('loading',  './assets/images/loading.png');
-    game.load.image('brand',    './assets/images/logo.gif');
+    game.load.image('logo',    './assets/images/logo.gif');
     game.load.script('splash',  'states/Splash.js');
   },
 

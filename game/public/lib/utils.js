@@ -1,4 +1,4 @@
-
+'use strict';
 
 let utils = {
   centerGameObjects: function (objects) {

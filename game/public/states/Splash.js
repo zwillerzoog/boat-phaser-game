@@ -37,8 +37,8 @@ Splash.prototype = {
 
   init: function () {
     this.loadingBar = game.make.sprite(game.world.centerX-(387/2), 400, "loading");
-    this.logo       = game.make.sprite(game.world.centerX, 200, 'logo');
-    this.status     = game.make.text(game.world.centerX, 380, 'Loading...', {fill: 'white'});
+    this.logo       = game.make.sprite(100, 100, 'logo');
+    this.status     = game.make.text(game.world.centerX, 380, 'Loading...', {fill: 'black'});
     utils.centerGameObjects([this.logo, this.status]);
   },
 
@@ -72,12 +72,12 @@ Splash.prototype = {
   // },
 
   create: function() {
-    this.status.setText('Ready!');
+    this.status.setText(`Shootin' Time!!!`);
     this.addGameStates();
     // this.addGameMusic();
 
     setTimeout(function () {
       game.state.start("GameMenu");
-    }, 1000);
+    }, 1500);
   }
 };
