@@ -21,9 +21,6 @@ let sprite;
 let player;
 let zombie;
 let walls;
-let timer;
-let timeLabel;
-let gameTimer;
 
 function createSprite(type, x, y, angle) {
     // type is an int that can be between 1 and 6 inclusive
@@ -87,14 +84,11 @@ function create() {
         }
     }
 
-    //Timer
-    // timer.create();
-
     //health
-    // healthText = game.add.text(16, 16, 'health: 100', {
-    //     fontSize: '32px',
-    //     fill: '#000'
-    // });
+    healthText = game.add.text(16, 16, 'health: 100', {
+        fontSize: '32px',
+        fill: '#000'
+    });
 
 
     // Walls
@@ -118,12 +112,6 @@ function create() {
         'person' + player_robot_type + '_1'
     );
     // player.sprite.anchor.setTo(0.5,0.5);
-    timeLabel = game.add.text(game.world.centerX, 100, "00:00", {font: "100px Arial", fill: "#fff"});
-    timeLabel.anchor.setTo(0.5, 0);
-    timeLabel.align = 'center';
-    gameTimer = game.time.events.loop(100, function(){
-        timer.update();
-    });
 
     game.physics.p2.enable(player.sprite);
     player.sprite.body.setZeroDamping();
@@ -148,9 +136,19 @@ function create() {
         type: 1
     });
 
+    socket.emit('new-zombie', {
+        x: zombie.sprite.x,
+        y: player.sprite.y,
+        angle: player.sprite.rotation
+    })
+
+    
+    // //create zombies
+    zombie.create();
+
     // Listen for other players connecting
     socket.on('update-players', function(players_data) {
-        console.log(players_data)
+        
         let players_found = {};
         // Loop over all the player data received
         for (let id in players_data) {
@@ -181,6 +179,16 @@ function create() {
             }
         }
     });
+
+    socket.on('update-zombies', function(zombie_data) {
+        console.log('hi')
+        console.log('UPDATE', zombie_data)
+        let foundZombies = {};
+        let data = zombie_data;
+        // other_zombies.target_x = data.x;
+        // other_zombies.target_y = data.y;
+        // other_zombies.target_rotation = data.angle;
+    })
 
     // Listen for bullet update events
     socket.on('bullets-update', function(server_bullet_array) {
@@ -214,34 +222,30 @@ function create() {
         if (id == socket.id) {
             //If this is you
             player.sprite.alpha = 0;
-            // healthText.text = 'health: ' + health;
+            healthText.text = 'health: ' + health;
+            if (health < 0) {
+                player.sprite.kill()
+            }
         } else {
             setTimeout((done = true), 3000);
             other_players[id].alpha = 0;
-        }
-        if (health < 0 && id == socket.id) {
-            player.sprite.destroy()
-            player.health = 100
-            console.log('player.health', player.health);
-            console.log('player', player);
-            //take out the bullets
-            for(let i=server_bullet_array.length;i<bullet_array.length;i++){
-                bullet_array[i].destroy();
-                // bullet_array.splice(i,1);
-                i--;
-            }
-            
-        } else if (health < 0 && id != socket.id) {
-            other_players[id].destroy()
         }
 
     });
 }
 
+// function doneTruer() {
+//     done = true
+// }
+function incrementhealth() {
+    if (done) {
+        // healthText.text = 'health: ' + health;
+    }
+}
+
 function GameLoop() {
-    // timer.update()
     player.update();
-    // updateTimer()
+    
     // Move camera with player
     let camera_x = player.sprite.x - WINDOW_WIDTH / 2;
     let camera_y = player.sprite.y - WINDOW_HEIGHT / 2;
@@ -273,13 +277,3 @@ function GameLoop() {
         }
     }
 }
-
-function createTimer() {
-            let me = this;
-            // timeLabel = game.add.text(game.world.centerX, 100, "00:00", {font: "100px Arial", fill: "#fff"});
-            // timeLabel.anchor.setTo(0.5, 0);
-            // timeLabel.align = 'center';
-}
-
-
-
