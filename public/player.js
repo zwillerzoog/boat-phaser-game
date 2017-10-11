@@ -4,6 +4,7 @@
 
 player = {
     sprite: null, //Will hold the sprite when it's created
+    zombieManager: false,
     speed_x: 0, // This is the speed it's currently moving at
     speed_y: 0,
     speed: 0.5, // This is the parameter for how fast it should move
@@ -68,6 +69,7 @@ player = {
             let speed_x = Math.cos(me.rotation + Math.PI / 2) * 20;
             let speed_y = Math.sin(me.rotation + Math.PI / 2) * 20;
             this.shot = true;
+            
             // Tell the server we shot a bullet
             socket.emit('shoot-bullet', {
                 x: me.x + 30,
@@ -88,3 +90,4 @@ player = {
         socket.emit('move-player', { x: me.x, y: me.y, angle: me.rotation });
     }
 };
+

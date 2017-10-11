@@ -6,7 +6,10 @@ zombie = {
     speed: 0.5,
     friction: 0.5,
     friction: 0.95,
-    create: function() {
+    create: function(player) {
+        if (player = true) {
+
+        
         let zombie1 = this.sprite;
         game.physics.p2.enable(zombie1);
         zombie1.body.setZeroDamping();
@@ -19,4 +22,5 @@ zombie = {
         socket.emit('move-zombie', { 
             x: zombie1.x, y: zombie1.y, angle: zombie1.rotation });
     }
+}
 }

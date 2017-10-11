@@ -13,14 +13,19 @@ let WORLD_SIZE = { w: 750, h: 500 };
 let water_tiles = [];
 let bullet_array = [];
 let other_players = {};
+let zombieCollisionGroup;
+let playerCollisionGroup;
+let enemyCollisionGroup;
 let done = false;
 let health = 100;
 let healthText;
 let socket; //Declare it in this scope, initialize in the `create` function
 let sprite;
 let player;
-let zombie;
+let zombies = [];
 let walls;
+let newZombie;
+let tween;
 
 function createSprite(type, x, y, angle) {
     // type is an int that can be between 1 and 6 inclusive
@@ -34,13 +39,22 @@ function createSprite(type, x, y, angle) {
 }
 
 function createZombie(x, y, angle) {
+    // console.log('XXX from create zombie', x)
     game.physics.startSystem(Phaser.Physics.P2JS);
     sprite = game.add.sprite(x, y, 'zombie'); 
     sprite.friction = 0.95;
     sprite.rotation = angle;
     sprite.anchor.setTo(0.5, 0.5);
+    game.physics.p2.enable(sprite);
+
+    sprite.body.kinematic = true;
+    sprite.body.setCollisionGroup(zombieCollisionGroup)
+    sprite.body.collides(playerCollisionGroup, eatPlayer, this)
+    sprite.body.collides(enemyCollisionGroup, eatEnemy, this)
+    
     return sprite;
 }
+
 
 function preload() {
     game.load.crossOrigin = 'Anonymous';
@@ -73,7 +87,17 @@ function preload() {
 function create() {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
+    game.stage.disableVisibilityChange = true;
+    game.physics.p2.setImpactEvents(true);
+
+    zombieCollisionGroup = game.physics.p2.createCollisionGroup();
+    playerCollisionGroup = game.physics.p2.createCollisionGroup();
+    enemyCollisionGroup = game.physics.p2.createCollisionGroup();
+    wallCollisionGroup = game.physics.p2.createCollisionGroup();
+    enemyZombieCollisionGroup = game.physics.p2.createCollisionGroup();
+    game.physics.p2.updateBoundsCollisionGroup();
     // game.physics.p2.restitution = 0.8;
+
     // Create tiles
     for (let i = 0; i <= WORLD_SIZE.w / 64 + 1; i++) {
         for (let j = 0; j <= WORLD_SIZE.h / 64 + 1; j++) {
@@ -95,6 +119,7 @@ function create() {
     let walls = game.add.group();
     walls.enableBody = true;
     walls.physicsBodyType = Phaser.Physics.P2JS;
+
     wall1 = walls.create(200, WINDOW_HEIGHT / 2, 'wall');
     wall1.body.static = true;
 
@@ -103,7 +128,9 @@ function create() {
     wall2.body.rotation = 1.5708;
     wall2.body.static = true;
 
-    // game.stage.disableVisibilityChange = true;
+
+    
+
     // Create player
     let player_robot_type = String(1);
     player.sprite = game.add.sprite(
@@ -111,24 +138,24 @@ function create() {
         Math.random() * WORLD_SIZE.h / 2 + WORLD_SIZE.h / 2,
         'person' + player_robot_type + '_1'
     );
-    // player.sprite.anchor.setTo(0.5,0.5);
 
+    // player.sprite.anchor.setTo(0.5,0.5);
+   
     game.physics.p2.enable(player.sprite);
     player.sprite.body.setZeroDamping();
     player.sprite.body.fixedRotation = true;
     player.sprite.body.setZeroVelocity();
+    // player.sprite.body.dynamic = true;
+    player.sprite.body.setCollisionGroup(playerCollisionGroup)
+    player.sprite.body.collides([playerCollisionGroup, wallCollisionGroup])
+    player.sprite.body.collides(zombieCollisionGroup, eatPlayer, this)
     game.camera.follow = player.sprite;
 
-    zombie.sprite = game.add.sprite(100, 100, 'zombie')
-    game.physics.p2.enable(zombie.sprite);
-    zombie.sprite.body.setZeroDamping();
-    zombie.sprite.body.fixedRotation = true;
-    zombie.sprite.body.setZeroVelocity();
-
-    console.log(player.sprite.x)
     
     socket = io(); // This triggers the 'connection' event on the server
     
+    chat()
+
     socket.emit('new-player', {
         x: player.sprite.x,
         y: player.sprite.y,
@@ -136,19 +163,47 @@ function create() {
         type: 1
     });
 
-    socket.emit('new-zombie', {
-        x: zombie.sprite.x,
-        y: player.sprite.y,
-        angle: player.sprite.rotation
+    socket.on('zombie-manager', function(startInfo) {
+        console.log(zombies)
+        if (startInfo.ID === socket.id && zombies.length == 0) {
+            console.log('This socket will be the zombie manager');
+            for (let i = 0; i < 1; i++) {
+                zombie[i] = game.add.sprite(100, 50, 'zombie')
+                game.physics.p2.enable(zombie[i]);
+                zombie[i].body.setZeroDamping();
+                zombie[i].body.fixedRotation = true;
+                zombie[i].body.setZeroVelocity();
+
+                zombie[i].body.kinematic = true;
+                zombie[i].body.setCollisionGroup(zombieCollisionGroup)
+                zombie[i].body.collides(playerCollisionGroup, eatPlayer, this)
+                zombie[i].body.collides(enemyCollisionGroup, eatEnemy, this)
+                zombies.push(zombie[i])
+
+                // tween = game.add.tween(zombie[i]).to( {
+                //      x: [600, 100]}, 4000, 
+                //      Phaser.Easing.Sinusoidal.Out, true);
+                // tween.loop()
+        }
+    }  
+        console.log(zombies[0])
+        if (startInfo.ID !== socket.id) {
+            console.log('boohoo')
+        }   
     })
 
-    
-    // //create zombies
-    zombie.create();
+    socket.on('update-zombies', function(zombie_data) {
+        let state = zombie_data.zombieState
+        // console.log('socket', socket.id)
+        if (socket.id !== zombie_data.ID) {
+            // console.log('meow new zombie')
+            newZombie = createZombie(state.x, state.y, state.angle)
+        }
+    })
+
 
     // Listen for other players connecting
     socket.on('update-players', function(players_data) {
-        
         let players_found = {};
         // Loop over all the player data received
         for (let id in players_data) {
@@ -158,6 +213,7 @@ function create() {
                 let data = players_data[id];
                 let p = createSprite(data.type, data.x, data.y, data.angle);
                 other_players[id] = p;
+                
                 console.log(
                     'Created new player at (' + data.x + ', ' + data.y + ')'
                 );
@@ -180,15 +236,7 @@ function create() {
         }
     });
 
-    socket.on('update-zombies', function(zombie_data) {
-        console.log('hi')
-        console.log('UPDATE', zombie_data)
-        let foundZombies = {};
-        let data = zombie_data;
-        // other_zombies.target_x = data.x;
-        // other_zombies.target_y = data.y;
-        // other_zombies.target_rotation = data.angle;
-    })
+    
 
     // Listen for bullet update events
     socket.on('bullets-update', function(server_bullet_array) {
@@ -223,28 +271,39 @@ function create() {
             //If this is you
             player.sprite.alpha = 0;
             healthText.text = 'health: ' + health;
-            if (health < 0) {
-                player.sprite.kill()
-            }
         } else {
             setTimeout((done = true), 3000);
             other_players[id].alpha = 0;
         }
+        console.log('IDDD', id)
+        if (health < 0 && id == socket.id) {
+            console.log(' dead id')
+            socket.emit('dead-player', id)
+        // } && id == socket.id) {
+        //     console.log('ouch')
+        //     player.sprite.kill()
+        // } 
+        // else if (health < 0 && id != socket.id){
+        //     other_players[id].destroy();
+        // }
 
-    });
-}
-
-// function doneTruer() {
-//     done = true
-// }
-function incrementhealth() {
-    if (done) {
-        // healthText.text = 'health: ' + health;
     }
+});
 }
+
 
 function GameLoop() {
     player.update();
+
+    if (zombies.length > 0) {
+        // console.log('zombie updater', zombies[0])
+        socket.emit('first-zombie', {
+            x: zombies[0].x,
+            y: zombies[0].y,
+            angle: zombies[0].rotation
+        })
+    }
+
     
     // Move camera with player
     let camera_x = player.sprite.x - WINDOW_WIDTH / 2;
@@ -276,4 +335,14 @@ function GameLoop() {
             p.rotation += dir * 0.16;
         }
     }
+}
+
+function eatPlayer() {
+    console.log('bumped into friend', player.sprite.alive)
+        player.sprite.kill()
+}
+
+function eatEnemy() {
+    console.log('bumped into enemy')
+    other_players[id].alpha = 0
 }

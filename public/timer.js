@@ -7,7 +7,7 @@ timer = {
         me.timeElapsed = 0;
     },
     update: function(){
-        socket = io(); // This triggers the 'connection' event on the server
+        // socket = io(); // This triggers the 'connection' event on the server
         
         socket.on('start-time', function(startTime) {
            let me = this;

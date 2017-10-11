@@ -24,21 +24,7 @@
     <script src="game.js"></script>
     <script src="player.js"></script>
     <script src="zombie.js"></script>
-    <script>
-        $(function () {
-            var socket = io();
-            $('form').submit(function () {
-                socket.emit('chat message', $('#m').val());
-                $('#m').val('');
-                return false;
-            });
-            socket.on('chat message', function (msg) {
-                console.log('messsage', msg)
-                $('#messages').append($('<li>').text(msg));
-                window.scrollTo(0, document.body.scrollHeight);
-            });
-        });
-    </script>
+    <script src="chat.js"></script>
 </body>
 
 </html>
