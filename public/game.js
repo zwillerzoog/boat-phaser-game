@@ -1,6 +1,5 @@
 let ASSET_URL = 'assets/';
 
-//We first initialize the phaser game object
 let WINDOW_WIDTH = 750;
 let WINDOW_HEIGHT = 500;
 let game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, '', {
@@ -16,38 +15,42 @@ let other_players = {};
 let done = false;
 let score;
 let scoreText;
-let socket; //Declare it in this scope, initialize in the `create` function
+let socket;
 let sprite;
 let player;
 let walls;
+let wall1;
+let wall2;
+let pew;
+let wallHitSound;
+let wallCollisionGroup;
+let laserCollisionGroup;
+let playerCollisionGroup;
+let laser;
 
 function createSprite(type, x, y, angle) {
     // type is an int that can be between 1 and 6 inclusive
-    // returns the sprite just created
     game.physics.startSystem(Phaser.Physics.P2JS);
-    // game.physics.p2.restitution = 0.8;
 
-    sprite = game.add.sprite(x, y, 'person' + String(type) + '_' + type); //changed  "ship" to "person"    +    '_1 to type
+    sprite = game.add.sprite(x, y, 'person' + String(type) + '_' + type);
     sprite.fiction = 0.95;
 
     sprite.rotation = angle;
     sprite.anchor.setTo(0.5, 0.5);
 
-    // sprite.body.setZeroDamping();
-    // sprite.body.fixedRotation = true;
-    // console.log('SPRITE', sprite)
+    sprite.body.setCollisionGroup(playerCollisionGroup);
+
     return sprite;
 }
-console.log(sprite);
+
 function preload() {
     game.load.crossOrigin = 'Anonymous';
-    game.stage.backgroundColor = '#58da45'; //+++changed background color
-    // Load all the ships
+    game.stage.backgroundColor = '#58da45';
     for (let i = 1; i <= 10; i++) {
         game.load.image(
             'person' + String(i) + '_' + i,
             ASSET_URL + 'robot1_gun.png'
-        ); //+++changing assets
+        );
         game.load.image(
             'person' + String(i) + '_2',
             ASSET_URL + 'robot2_gun.png'
@@ -62,14 +65,17 @@ function preload() {
         );
     }
 
-    game.load.image('bullet', ASSET_URL + 'blue_beam.png');
+    game.load.image('laser', ASSET_URL + 'red_beam.png');
     game.load.image('water', ASSET_URL + 'tile_06.png');
-    game.load.image('wall', ASSET_URL + 'trak2_trim2b.png');
+    game.load.image('wall', ASSET_URL + 'wall.png');
+    game.load.spritesheet('smoke', ASSET_URL + 'smoke-fire.png', 16, 16);
+    game.load.audio('pew', ASSET_URL + 'heidi-pew.mp3');
+    game.load.audio('wall-hit', ASSET_URL + 'wall-hit.mp3');
 }
 
 function create() {
     game.physics.startSystem(Phaser.Physics.P2JS);
-    // game.physics.p2.restitution = 0.8;
+    game.physics.p2.setImpactEvents(true);
 
     // Create tiles
     for (let i = 0; i <= WORLD_SIZE.w / 64 + 1; i++) {
@@ -81,7 +87,7 @@ function create() {
         }
     }
 
-    //SCORE
+    // SCORE
     scoreText = game.add.text(16, 16, 'score:0', {
         fontSize: '32px',
         fill: '#000'
@@ -98,6 +104,21 @@ function create() {
     walls.add(wall2);
     wall2.body.rotation = 1.5708;
     wall2.body.static = true;
+
+    // Sounds
+    pew = game.add.audio('pew', 5);
+    wallHitSound = game.add.audio('wall-hit');
+
+    // Collision Behavior
+    wallCollisionGroup = game.physics.p2.createCollisionGroup();
+    laserCollisionGroup = game.physics.p2.createCollisionGroup();
+    playerCollisionGroup = game.physics.p2.createCollisionGroup();
+
+    wall1.body.setCollisionGroup(wallCollisionGroup);
+    wall2.body.setCollisionGroup(wallCollisionGroup);
+
+    // Fire laser
+    game.input.onUp.add(shootLaser, this);
 
     // game.stage.disableVisibilityChange = true;
     // Create player
@@ -116,7 +137,7 @@ function create() {
 
     game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
     game.physics.startSystem(Phaser.Physics.P2JS);
-    // game.physics.p2.setImpactEvents(true)
+
     game.camera.follow = player.sprite;
     // game.camera.y = player.sprite.y
     // game.camera.target = player.sprite;
@@ -203,6 +224,46 @@ function create() {
     });
 }
 
+function shootLaser() {
+    pew.play();
+
+    // robot facing east
+    if (player.sprite.rotation === 4.71239) {
+        createLaser(30, 10, 300, 0, 1.5708);
+    }
+
+    // robot facing south
+    if (player.sprite.rotation === 0) {
+        createLaser(-10, 30, 0, 300, 0);
+    }
+
+    // robot facing west
+    if (player.sprite.rotation === 1.5708) {
+        createLaser(-30, -10, -300, 0, 1.5708);
+    }
+
+    // robot facing north
+    if (player.sprite.rotation === 3.14159) {
+        createLaser(10, -30, 0, -300, 0);
+    }
+
+    laser.scale.setTo(0.6, 0.75);
+    laser.body.setCollisionGroup(laserCollisionGroup);
+    laser.body.collides([wallCollisionGroup, playerCollisionGroup]);
+}
+
+function createLaser(xOffset, yOffset, xVelocity, yVelocity, rotationRadians) {
+    laser = game.add.sprite(
+        player.sprite.position.x + xOffset,
+        player.sprite.position.y + yOffset,
+        'laser'
+    );
+    game.physics.p2.enable(laser);
+    laser.body.velocity.x = xVelocity;
+    laser.body.velocity.y = yVelocity;
+    laser.body.rotation = rotationRadians;
+}
+
 // function doneTruer() {
 //     done = true
 // }
@@ -244,18 +305,4 @@ function GameLoop() {
             p.rotation += dir * 0.16;
         }
     }
-    /* We're updating the bullets on the server, so we don't need to do this on the client anymore 
-                // Update bullets 
-                for(let i=0;i<bullet_array.length;i++){
-                    let bullet = bullet_array[i];
-                    bullet.sprite.x += bullet.speed_x; 
-                    bullet.sprite.y += bullet.speed_y; 
-                    // Remove if it goes too far off screen 
-                    if(bullet.sprite.x < -10 || bullet.sprite.x > WORLD_SIZE.w || bullet.sprite.y < -10 || bullet.sprite.y > WORLD_SIZE.h){
-                        bullet.sprite.destroy();
-                        bullet_array.splice(i,1);
-                        i--;
-                    }
-                } 
-                */
 }
