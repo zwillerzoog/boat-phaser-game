@@ -65,7 +65,7 @@ function preload() {
     }
 
     game.load.image('laser', ASSET_URL + 'red_beam.png');
-    game.load.image('water', ASSET_URL + 'tile_06.png');
+    game.load.image('asphalt', ASSET_URL + 'asphalt.png');
     game.load.image('wall', ASSET_URL + 'wall.png');
     game.load.spritesheet('smoke', ASSET_URL + 'smoke-fire.png', 16, 16);
     game.load.audio('pew', ASSET_URL + 'heidi-pew.mp3');
@@ -79,7 +79,7 @@ function create() {
     // Create tiles
     for (let i = 0; i <= WORLD_SIZE.w / 64 + 1; i++) {
         for (let j = 0; j <= WORLD_SIZE.h / 64 + 1; j++) {
-            let tile_sprite = game.add.sprite(i * 64, j * 64, 'water');
+            let tile_sprite = game.add.sprite(i * 64, j * 64, 'asphalt');
             tile_sprite.anchor.setTo(0.5, 0.5);
             tile_sprite.alpha = 0.5;
             water_tiles.push(tile_sprite);
