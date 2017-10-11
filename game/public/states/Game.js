@@ -19,8 +19,8 @@ let water_tiles = [];
 let bullet_array = [];
 let other_players = {};
 let done = false;
-let score;
-let scoreText;
+let health = 100;
+let healthText;
 let socket; //Declare it in this scope, initialize in the `create` function
 let sprite;
 // let player;
@@ -119,8 +119,8 @@ Game.prototype = {
       }
     }
 
-    //SCORE
-    scoreText = game.add.text(16, 16, 'score:0', {
+     //HEALTH
+    healthText = game.add.text(16, 16, 'health: 100', {
       fontSize: '32px',
       fill: '#000'
     });
@@ -227,7 +227,6 @@ Game.prototype = {
 
     // Listen for any player hit events and make that player flash
     socket.on('player-hit', function(id) {
-      this.incrementScore();
       if (id == socket.id) {
         //If this is you
         player.sprite.alpha = 0;
@@ -238,9 +237,7 @@ Game.prototype = {
       }
     });
 
-    socket.on('score', function(score) {
-      scoreText.text = 'Score: ' + score;
-    });
+  
   },
 
   update: function() {
@@ -277,15 +274,10 @@ Game.prototype = {
     }
   },
 
-  // function doneTruer() {
-  //     done = true
-  // }
-  incrementScore: function() {
-    if (done) {
-    // scoreText.text = 'Score: ' + score;
-    }
+  
+  losingScreen: function() {
     this.stage.disableVisibilityChange = false;
-    game.add.sprite(0, 0, 'stars');
+    game.add.sprite(0, 0, 'load-bg');
     this.addMenuOption('Next ->', function (e) {
       this.game.state.start('GameOver');
     });
