@@ -27,6 +27,7 @@ let wallCollisionGroup;
 let laserCollisionGroup;
 let playerCollisionGroup;
 let laser;
+let smoke;
 
 function createSprite(type, x, y, angle) {
     // type is an int that can be between 1 and 6 inclusive
@@ -106,14 +107,13 @@ function create() {
     wall2.body.static = true;
 
     // Sounds
-    pew = game.add.audio('pew', 5);
+    pew = game.add.audio('pew', 3);
     wallHitSound = game.add.audio('wall-hit');
 
-    // Collision Behavior
+    // Create collision Behavior
     wallCollisionGroup = game.physics.p2.createCollisionGroup();
     laserCollisionGroup = game.physics.p2.createCollisionGroup();
     playerCollisionGroup = game.physics.p2.createCollisionGroup();
-
     wall1.body.setCollisionGroup(wallCollisionGroup);
     wall2.body.setCollisionGroup(wallCollisionGroup);
 
@@ -305,4 +305,50 @@ function GameLoop() {
             p.rotation += dir * 0.16;
         }
     }
+
+    // Collision behavior
+    wall1.body.collides(laserCollisionGroup, laserCollisionHandler, this);
+    wall2.body.collides(laserCollisionGroup, laserCollisionHandler, this);
+    player.sprite.body.collides(laserCollisionGroup);
+}
+
+function laserCollisionHandler(wallBody, laserBody) {
+    wallHitSound.play();
+
+    // robot facing east
+    if (player.sprite.rotation === 4.71239) {
+        createSmoke(laserBody, -2, -11);
+    }
+
+    // robot facing south
+    if (player.sprite.rotation === 0) {
+        createSmoke(laserBody, -11, 0);
+    }
+
+    // robot facing west
+    if (player.sprite.rotation === 1.5708) {
+        createSmoke(laserBody, -24, -13);
+    }
+
+    // robot facing north
+    if (player.sprite.rotation === 3.14159) {
+        createSmoke(laserBody, -13, -22);
+    }
+
+    animateSmoke();
+    laserBody.sprite.kill();
+}
+
+function createSmoke(laserBody, xOffset, yOffset) {
+    smoke = game.add.sprite(
+        laserBody.sprite.position.x + xOffset,
+        laserBody.sprite.position.y + yOffset,
+        'smoke'
+    );
+}
+
+function animateSmoke() {
+    smoke.scale.setTo(1.5, 1.5);
+    smoke.animations.add('smoke', [0, 1, 2, 3, 4, 5, 6, 7], 16, false);
+    smoke.play('smoke', null, null, true);
 }
