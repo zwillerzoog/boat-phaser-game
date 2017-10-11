@@ -93,7 +93,7 @@ function create() {
     });
 
     // Walls
-    let walls = game.add.group();
+    walls = game.add.group();
     walls.enableBody = true;
     walls.physicsBodyType = Phaser.Physics.P2JS;
     wall1 = walls.create(200, WINDOW_HEIGHT / 2, 'wall');
@@ -138,9 +138,6 @@ function create() {
     game.physics.startSystem(Phaser.Physics.P2JS);
 
     game.camera.follow = player.sprite;
-    // game.camera.y = player.sprite.y
-    // game.camera.target = player.sprite;
-    // console.log('CAMERA: ', game.camera.target)
     socket = io(); // This triggers the 'connection' event on the server
     socket.emit('new-player', {
         x: player.sprite.x,
@@ -154,7 +151,7 @@ function create() {
         // Loop over all the player data received
         for (let id in players_data) {
             // If the player hasn't been created yet
-            if (other_players[id] == undefined && id != socket.id) {
+            if (other_players[id] == undefined && id !== socket.id) {
                 // Make sure you don't create yourself
                 let data = players_data[id];
                 let p = createSprite(data.type, data.x, data.y, data.angle);
@@ -166,7 +163,7 @@ function create() {
             players_found[id] = true;
 
             // Update positions of other players
-            if (id != socket.id) {
+            if (id !== socket.id) {
                 other_players[id].target_x = players_data[id].x; // Update target, not actual position, so we can interpolate
                 other_players[id].target_y = players_data[id].y;
                 other_players[id].target_rotation = players_data[id].angle;
@@ -208,7 +205,7 @@ function create() {
     // Listen for any player hit events and make that player flash
     socket.on('player-hit', function(id) {
         incrementScore();
-        if (id == socket.id) {
+        if (id === socket.id) {
             //If this is you
             player.sprite.alpha = 0;
         } else {
@@ -263,9 +260,6 @@ function createLaser(xOffset, yOffset, xVelocity, yVelocity, rotationRadians) {
     laser.body.rotation = rotationRadians;
 }
 
-// function doneTruer() {
-//     done = true
-// }
 function incrementScore() {
     if (done) {
         // scoreText.text = 'Score: ' + score;

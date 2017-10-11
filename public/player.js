@@ -16,7 +16,7 @@ player = {
         me.body.setZeroVelocity();
         // sprite.body.setCircle(28);
         // //  This boolean controls if the player should collide with the world bounds or not
-        // sprite.body.collideWorldBounds = true;
+        // player.sprite.body.collideWorldBounds = true;
 
         // cursors = game.input.keyboard.createCursorKeys();
         // console.log('XXX: ', me.x);
