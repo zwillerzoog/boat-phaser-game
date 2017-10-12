@@ -40,6 +40,7 @@ GameOver.prototype = {
     text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
     text.anchor.set(0.5);
     this.addMenuOption('Play Again', function (e) {
+      player.health = 100;
       this.game.state.start("Game");
     });
     this.addMenuOption('Main Menu', function (e) {
