@@ -184,7 +184,7 @@ alpha: change the alpha for the background bar
     wall2.body.static = true;
 
     // Sounds
-    pew = game.add.audio('pew', 3);
+    pew = game.add.audio('pew', 1);
     wallHitSound = game.add.audio('wall-hit');
 
     // Create collision Behavior

@@ -1,7 +1,6 @@
-'use strict';
-var Options = function(game) {};
+var Instructions = function(game) {};
 
-Options.prototype = {
+Instructions.prototype = {
 
   menuConfig: {
     className: 'inverse',
@@ -24,7 +23,7 @@ Options.prototype = {
     let playSound = gameOptions.playSound;
     let playMusic = gameOptions.playMusic;
 
-    game.add.sprite(0, 0, 'options-bg');
+    game.add.sprite(0, 0, 'instructions2');
     game.add.existing(this.titleText);
     this.addMenuOption(playMusic ? 'Mute Music' : 'Play Music', function (target) {
       playMusic = !playMusic;
@@ -33,15 +32,14 @@ Options.prototype = {
       console.log('MUSIC :', musicPlayer);
       console.log('VOLUME :', musicPlayer.volume);
     });
-    this.addMenuOption(playSound ? 'Mute Sound' : 'Play Sound', function (target) {
-      playSound = !playSound;
-      target.text = playSound ? 'Mute Sound' : 'Play Sound';
-      pew.volume = playSound ? 1 : 0; 
-    });
+    // this.addMenuOption(playSound ? 'Mute Sound' : 'Play Sound', function (target) {
+    //   playSound = !playSound;
+    //   target.text = playSound ? 'Mute Sound' : 'Play Sound';
+    // });
     this.addMenuOption('<- Back', function () {
       game.state.start('GameMenu');
     });
   }
 };
 
-Phaser.Utils.mixinPrototype(Options.prototype, mixins);
+Phaser.Utils.mixinPrototype(Instructions.prototype, mixins);
