@@ -19,6 +19,7 @@ let water_tiles = [];
 let bullet_array = [];
 let other_players = {};
 let done = false;
+let playerHealthMeter;
 let health = 100;
 let healthText;
 let socket; //Declare it in this scope, initialize in the `create` function
@@ -102,6 +103,8 @@ Game.prototype = {
     game.load.image('bullet', ASSET_URL + 'blue_beam.png');
     game.load.image('water', ASSET_URL + 'tile_06.png');
     game.load.image('wall', ASSET_URL + 'trak2_trim2b.png');
+
+    game.load.image('healthBar', ASSET_URL + 'images/healthMeter.png');
   },
 
   
@@ -119,12 +122,48 @@ Game.prototype = {
       }
     }
 
-     //HEALTH
+    //HEALTH
     healthText = game.add.text(16, 16, 'health: 100', {
       fontSize: '32px',
       fill: '#000'
     });
 
+    //HEALTHBAR PLUGIN
+
+    player.health = 10;             //was this.player.health
+    player.maxHealth = 100;         //was this.player.maxHealth
+
+    playerHealthMeter = game.add.plugin(Phaser.Plugin.HealthMeter);
+    playerHealthMeter.bar(  player, 
+      {
+        x: 20, 
+        y: 100, 
+        width: 300, 
+        height: 20
+      }
+
+      
+      //options for the health bar
+
+      /*
+x: set the left x coordinate of the health meter
+
+y: set the top y coordinate of the health meter
+
+width: the max width of the health meter (thus the width of the maxHealth meter)
+
+height: the height of the meter
+
+foreground: set the foreground color
+
+background: set the background (max health) color
+
+alpha: change the alpha for the background bar
+*/
+    );
+    console.log('Player Health: ', player.health);
+    console.log('Player maxHealth: ', player.maxHealth);
+    console.log('Player HealthMeter: ', playerHealthMeter);
     // Walls
     let walls = game.add.group();
     walls.enableBody = true;
