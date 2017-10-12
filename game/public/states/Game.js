@@ -6,14 +6,6 @@ var Game = function(game) {
 
 let ASSET_URL = 'assets/';
 
-//We first initialize the phaser game object
-
-// {
-//   preload: preload,
-//   create: create,
-//   update: update
-// });
-
 let WORLD_SIZE = { w: 750, h: 500 };
 let water_tiles = [];
 let bullet_array = [];
@@ -28,7 +20,13 @@ let sprite;
 let walls;
 let wall1;
 let wall2;
-
+let pew;
+let wallHitSound;
+let wallCollisionGroup;
+let laserCollisionGroup;
+let playerCollisionGroup;
+let laser;
+let smoke;
 
 Game.prototype = {
   // addMenuOption: function(text, callback) {
@@ -62,7 +60,6 @@ Game.prototype = {
     // type is an int that can be between 1 and 6 inclusive
     // returns the sprite just created
     game.physics.startSystem(Phaser.Physics.P2JS);
-    // game.physics.p2.restitution = 0.8;
 
     sprite = game.add.sprite(x, y, 'person' + String(type) + '_' + type); //changed  "ship" to "person"    +    '_1 to type
     sprite.fiction = 0.95;
@@ -70,17 +67,13 @@ Game.prototype = {
     sprite.rotation = angle;
     sprite.anchor.setTo(0.5, 0.5);
 
-    // sprite.body.setZeroDamping();
-    // sprite.body.fixedRotation = true;
-    // console.log('SPRITE', sprite)
     return sprite;
   },
 
   preload: function () {
     this.optionCount = 1;
     game.load.crossOrigin = 'Anonymous';
-    game.stage.backgroundColor = '#58da45'; //+++changed background color
-    // Load all the ships
+    game.stage.backgroundColor = '#58da45'; 
     for (let i = 1; i <= 10; i++) {
       game.load.image(
         'person' + String(i) + '_' + i,
@@ -100,27 +93,40 @@ Game.prototype = {
       );
     }
 
-    game.load.image('bullet', ASSET_URL + 'blue_beam.png');
-    game.load.image('water', ASSET_URL + 'tile_06.png');
-    game.load.image('wall', ASSET_URL + 'trak2_trim2b.png');
+    game.load.image('laser', ASSET_URL + 'blue_beam.png');
+    //===================================================
+
+    game.load.image('asphalt', ASSET_URL + 'asphalt.png');
+    game.load.image('wall', ASSET_URL + 'wall.png');
+    game.load.spritesheet('smoke', ASSET_URL + 'smoke-fire.png', 16, 16);
+    game.load.audio('pew', ASSET_URL + 'heidi-pew.mp3');
+    game.load.audio('wall-hit', ASSET_URL + 'wall-hit.mp3');
+    //=====================================================
 
     game.load.image('healthBar', ASSET_URL + 'images/healthMeter.png');
   },
 
   
   create: function () {
+    game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
     game.physics.startSystem(Phaser.Physics.P2JS);
-    // game.physics.p2.restitution = 0.8;
+    game.physics.p2.setImpactEvents(true);
 
     // Create tiles
     for (let i = 0; i <= WORLD_SIZE.w / 64 + 1; i++) {
       for (let j = 0; j <= WORLD_SIZE.h / 64 + 1; j++) {
-        let tile_sprite = game.add.sprite(i * 64, j * 64, 'water');
+        let tile_sprite = game.add.sprite(i * 64, j * 64, 'asphalt');
         tile_sprite.anchor.setTo(0.5, 0.5);
         tile_sprite.alpha = 0.5;
         water_tiles.push(tile_sprite);
       }
     }
+
+    // // SCORE
+    //   scoreText = game.add.text(16, 16, 'score:0', {
+    //   fontSize: '32px',
+    //   fill: '#000'
+    // });
 
     //HEALTH
     healthText = game.add.text(16, 16, 'health: 100', {
@@ -164,6 +170,7 @@ alpha: change the alpha for the background bar
     console.log('Player Health: ', player.health);
     console.log('Player maxHealth: ', player.maxHealth);
     console.log('Player HealthMeter: ', playerHealthMeter);
+    
     // Walls
     let walls = game.add.group();
     walls.enableBody = true;
@@ -175,6 +182,20 @@ alpha: change the alpha for the background bar
     walls.add(wall2);
     wall2.body.rotation = 1.5708;
     wall2.body.static = true;
+
+    // Sounds
+    pew = game.add.audio('pew', 3);
+    wallHitSound = game.add.audio('wall-hit');
+
+    // Create collision Behavior
+    wallCollisionGroup = game.physics.p2.createCollisionGroup();
+    laserCollisionGroup = game.physics.p2.createCollisionGroup();
+    playerCollisionGroup = game.physics.p2.createCollisionGroup();
+    wall1.body.setCollisionGroup(wallCollisionGroup);
+    wall2.body.setCollisionGroup(wallCollisionGroup);
+
+    // Fire laser
+    game.input.onUp.add(this.shootLaser, this);
 
     // game.stage.disableVisibilityChange = true;
     // Create player
@@ -189,12 +210,16 @@ alpha: change the alpha for the background bar
     // player.sprite.anchor.setTo(0.5,0.5);
 
     game.physics.p2.enable(player.sprite);
+    player.sprite.body.setCollisionGroup(playerCollisionGroup);
     player.sprite.body.setZeroDamping();
     player.sprite.body.fixedRotation = true;
     player.sprite.body.setZeroVelocity();
 
-    game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
-    game.physics.startSystem(Phaser.Physics.P2JS);
+    // allows for things to stay within world bounds
+    game.physics.p2.updateBoundsCollisionGroup();
+
+    // game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
+    // game.physics.startSystem(Phaser.Physics.P2JS);
     // game.physics.p2.setImpactEvents(true)
     game.camera.follow = player.sprite;
     // game.camera.y = player.sprite.y
@@ -225,7 +250,7 @@ alpha: change the alpha for the background bar
         players_found[id] = true;
 
         // Update positions of other players
-        if (id != socket.id) {
+        if (id !== socket.id) {
           other_players[id].target_x = players_data[id].x; // Update target, not actual position, so we can interpolate
           other_players[id].target_y = players_data[id].y;
           other_players[id].target_rotation = players_data[id].angle;
@@ -279,6 +304,48 @@ alpha: change the alpha for the background bar
   
   },
 
+  shootLaser: function () {
+    pew.play();
+
+    // robot facing east
+    if (player.sprite.rotation === 4.71239) {
+      this.createLaser(30, 10, 550, 0, 1.5708);
+    }
+
+    // robot facing south
+    if (player.sprite.rotation === 0) {
+      this.createLaser(-10, 30, 0, 550, 0);
+    }
+
+    // robot facing west
+    if (player.sprite.rotation === 1.5708) {
+      this.createLaser(-30, -10, -550, 0, 1.5708);
+    }
+
+    // robot facing north
+    if (player.sprite.rotation === 3.14159) {
+      this.createLaser(10, -30, 0, -550, 0);
+    }
+
+    laser.scale.setTo(0.6, 0.75);
+    laser.body.setCollisionGroup(laserCollisionGroup);
+    laser.body.collides([wallCollisionGroup, playerCollisionGroup]);
+  },
+
+  createLaser: function (xOffset, yOffset, xVelocity, yVelocity, rotationRadians) {
+    laser = game.add.sprite(
+      player.sprite.position.x + xOffset,
+      player.sprite.position.y + yOffset,
+      'laser'
+    );
+    game.physics.p2.enable(laser);
+    laser.body.collideWorldBounds = false;
+    laser.body.velocity.x = xVelocity;
+    laser.body.velocity.y = yVelocity;
+    laser.body.rotation = rotationRadians;
+  },
+
+
   update: function() {
     player.update();
     // Move camera with player
@@ -311,9 +378,57 @@ alpha: change the alpha for the background bar
         p.rotation += dir * 0.16;
       }
     }
+
+    // Collision behavior
+    wall1.body.collides(laserCollisionGroup, this.laserCollisionHandler, this);
+    wall2.body.collides(laserCollisionGroup, this.laserCollisionHandler, this);
+    wall1.body.collides(playerCollisionGroup);
+    wall2.body.collides(playerCollisionGroup);
+    player.sprite.body.collides(wallCollisionGroup);
+
   },
 
-  
+  laserCollisionHandler: function(wallBody, laserBody) {
+    wallHitSound.play();
+
+    // robot facing east
+    if (player.sprite.rotation === 4.71239) {
+      createSmoke(laserBody, -2, -11);
+    }
+
+    // robot facing south
+    if (player.sprite.rotation === 0) {
+      createSmoke(laserBody, -11, 0);
+    }
+
+    // robot facing west
+    if (player.sprite.rotation === 1.5708) {
+      createSmoke(laserBody, -24, -13);
+    }
+
+    // robot facing north
+    if (player.sprite.rotation === 3.14159) {
+      createSmoke(laserBody, -13, -22);
+    }
+
+    animateSmoke();
+    laserBody.sprite.kill();
+  },
+
+  createSmoke: function (laserBody, xOffset, yOffset) {
+    smoke = game.add.sprite(
+      laserBody.sprite.position.x + xOffset,
+      laserBody.sprite.position.y + yOffset,
+      'smoke'
+    );
+  },
+
+  animateSmoke: function () {
+    smoke.scale.setTo(1.5, 1.5);
+    smoke.animations.add('smoke', [0, 1, 2, 3, 4, 5, 6, 7], 16, false);
+    smoke.play('smoke', null, null, true);
+  },
+
   losingScreen: function() {
     this.stage.disableVisibilityChange = false;
     game.add.sprite(0, 0, 'load-bg');

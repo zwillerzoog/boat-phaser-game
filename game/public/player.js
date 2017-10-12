@@ -1,6 +1,5 @@
-'use strict';// function () {
+'use strict';
 
-// }
 let player = {
   sprite: null, //Will hold the sprite when it's created
   speed_x: 0, // This is the speed it's currently moving at
@@ -19,47 +18,47 @@ let player = {
     me.body.setZeroVelocity();
     // sprite.body.setCircle(28);
     // //  This boolean controls if the player should collide with the world bounds or not
-    // sprite.body.collideWorldBounds = true;
+    // player.sprite.body.collideWorldBounds = true;
 
     // cursors = game.input.keyboard.createCursorKeys();
     // console.log('XXX: ', me.x);
     // console.log('YYYY', me.y)
     // console.log('ROTATION', me.rotation)
 
-    // Move forward
+    // Move north
     if (
       game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
             game.input.keyboard.isDown(Phaser.Keyboard.W)
     ) {
       me.body.moveUp(200);
-      me.rotation = 3.1;
+      me.rotation = 3.14159;
     }
 
-    //turn right
+    // Move east
     if (
       game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ||
             game.input.keyboard.isDown(Phaser.Keyboard.D)
     ) {
-      me.rotation = 4.7;
+      me.rotation = 4.71239;
       me.body.moveRight(200);
     }
 
-    //turn left
+    // Move west
     if (
       game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ||
             game.input.keyboard.isDown(Phaser.Keyboard.A)
     ) {
-      me.rotation = 1.6;
+      me.rotation = 1.5708;
       me.body.moveLeft(200);
     }
 
-    //move backward
+    // Move south
     if (
       game.input.keyboard.isDown(Phaser.Keyboard.DOWN) ||
             game.input.keyboard.isDown(Phaser.Keyboard.S)
     ) {
       me.body.moveDown(200);
-      me.rotation = 6.3;
+      me.rotation = 0;
     }
 
     // Shoot bullet
