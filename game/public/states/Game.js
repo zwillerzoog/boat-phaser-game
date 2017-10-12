@@ -128,22 +128,28 @@ Game.prototype = {
     // });
 
     //HEALTH
-    healthText = game.add.text(16, 16, 'health: 100', {
-      fontSize: '32px',
-      fill: '#000'
-    });
+    // healthText = game.add.text(16, 16, 'health: 100', {
+    //   fontSize: '32px',
+    //   fill: '#000'
+    // });
 
     //HEALTHBAR PLUGIN
 
-    player.health = 0;             //was this.player.health
+    player.health = 100;             //was this.player.health
     player.maxHealth = 100;         //was this.player.maxHealth
     
+
+
+    // setInterval(function() {
+    //   console.log('hi im killin you')
+    //   player.health--
+    //   }, 1000)
 
     playerHealthMeter = game.add.plugin(Phaser.Plugin.HealthMeter);
     playerHealthMeter.bar(  player, 
       {
         x: 20, 
-        y: 100, 
+        y: 20, 
         width: 300, 
         height: 20
       }
