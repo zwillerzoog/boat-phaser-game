@@ -135,8 +135,9 @@ Game.prototype = {
 
     //HEALTHBAR PLUGIN
 
-    player.health = 10;             //was this.player.health
+    player.health = 0;             //was this.player.health
     player.maxHealth = 100;         //was this.player.maxHealth
+    
 
     playerHealthMeter = game.add.plugin(Phaser.Plugin.HealthMeter);
     playerHealthMeter.bar(  player, 
@@ -300,6 +301,17 @@ alpha: change the alpha for the background bar
       }
     });
 
+    // END OF GAME 
+
+    this.stage.disableVisibilityChange = false;
+    // game.add.sprite(0, 0, 'load-bg');
+    if (player.health === 0) {
+      game.state.start('gameover');
+    }
+    // this.addMenuOption('Next ->', function (e) {
+    //   this.game.state.start('GameOver');
+    // });
+  
   
   },
 
@@ -428,12 +440,7 @@ alpha: change the alpha for the background bar
     smoke.play('smoke', null, null, true);
   },
 
-  losingScreen: function() {
-    this.stage.disableVisibilityChange = false;
-    game.add.sprite(0, 0, 'load-bg');
-    this.addMenuOption('Next ->', function (e) {
-      this.game.state.start('GameOver');
-    });
-  }
+  
+  
   
 };

@@ -30,6 +30,8 @@ Options.prototype = {
       playMusic = !playMusic;
       target.text = playMusic ? 'Mute Music' : 'Play Music';
       musicPlayer.volume = playMusic ? 1 : 0;
+      console.log('MUSIC :', musicPlayer);
+      console.log('VOLUME :', musicPlayer.volume);
     });
     this.addMenuOption(playSound ? 'Mute Sound' : 'Play Sound', function (target) {
       playSound = !playSound;

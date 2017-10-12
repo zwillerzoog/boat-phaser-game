@@ -66,9 +66,9 @@ Splash.prototype = {
   },
 
   addGameMusic: function () {
-    this.music = game.add.audio('gamemusic');
-    this.music.loop = true;
-    this.music.play();
+    this.musicPlayer = game.add.audio('gamemusic');
+    this.musicPlayer.loop = true;
+    this.musicPlayer.play();
   },
 
   create: function() {
