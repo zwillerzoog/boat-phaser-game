@@ -96,7 +96,7 @@ Game.prototype = {
     }
 
     game.load.image('ghost', ASSET_URL + 'ghost1_gun.png')
-
+    game.load.image('bullet', ASSET_URL + 'blue_beam.png')
     game.load.image('laser', ASSET_URL + 'blue_beam.png');
     //===================================================
 
@@ -309,16 +309,19 @@ alpha: change the alpha for the background bar
     socket.on('bullets-update', function(server_bullet_array) {
       // If there's not enough bullets on the client, create them
       for (let i = 0; i < server_bullet_array.length; i++) {
+        
         if (bullet_array[i] == undefined) {
           bullet_array[i] = game.add.sprite(
             server_bullet_array[i].x,
             server_bullet_array[i].y,
             'bullet'
           );
+          bullet_array[i].alpha = 0;
         } else {
           //Otherwise, just update it!
           bullet_array[i].x = server_bullet_array[i].x;
           bullet_array[i].y = server_bullet_array[i].y;
+          bullet_array[i].alpha = 0;
         }
       }
       // Otherwise if there's too many, delete the extra
@@ -351,12 +354,41 @@ alpha: change the alpha for the background bar
     });
 
     socket.on('initiate-ghost', (data) => {
-      // console.log('data', data.x)
-      console.log('ghost', ghost)
+      let x;
+      let y;
       ghost.body.x = data.x;
       ghost.body.y = data.y;
-      console.log(data.x, '=', ghost.body.x)
-      console.log(data.y, '=', ghost.body.y)
+      //750,500
+      // 0,0 = top left
+      // 0,500 = bottom left
+      //750,0 = top right
+      //750, 500 = bottom right
+      if (ghost.body.x <= 375 && ghost.body.y <= 250) {
+          x = this.mathRandomizer(750, 800);
+          y = this.mathRandomizer(500, 600);
+      } else if (ghost.body.x <= 375 && ghost.body.y >= 250) {
+          x = this.mathRandomizer(750, 800);
+          y = this.mathRandomizer(-100, 0);
+      } else if (ghost.body.x >= 375 && ghost.body.y >= 250) {
+          x = this.mathRandomizer(-100, 0);
+          y = this.mathRandomizer(-100, 0);
+      } else if (ghost.body.x >= 375 && ghost.body.y <= 250) {
+          x = this.mathRandomizer(-100, 0);
+          y = this.mathRandomizer(500, 600);
+      } else {
+          x = this.mathRandomizer(-100, 800);
+          y = this.mathRandomizer(-100, 600);
+      }
+      console.log('x', this.mathRandomizer(750, 800))
+      console.log('y',y)
+      game.add.tween(ghost.body).to( { x,y
+      }, 7000, Phaser.Easing.Quartic.In, true);
+
+      
+      setInterval( () => {
+        ghost.body.x = 100;
+        ghost.body.y = -50
+      }, 7400)
     })
 
     
@@ -445,8 +477,8 @@ alpha: change the alpha for the background bar
     wall1.body.collides(playerCollisionGroup);
     wall2.body.collides(playerCollisionGroup);
     player.sprite.body.collides(wallCollisionGroup);
-    player.sprite.body.collides(ghostCollisionGroup)
-    ghost.body.collides(playerCollisionGroup)
+    player.sprite.body.collides(ghostCollisionGroup, this.ghostCollisionHandler, this)
+    ghost.body.collides(playerCollisionGroup, this.ghostCollisionHandler, this)
 
   },
 
@@ -491,7 +523,17 @@ alpha: change the alpha for the background bar
     smoke.play('smoke', null, null, true);
   },
 
+  ghostCollisionHandler: function () {
+    player.health = 0;
+    let id = socket.id;
+    let coords = {x: player.sprite.x, y: player.sprite.y};
+    socket.emit('dead-player', {id, coords})
+    this.game.state.start('GameOver');
+  },
   
-  
+  mathRandomizer: function(min, max) {
+   let number = Math.floor(Math.random() * max) + min; 
+   return number;
+  }
   
 };

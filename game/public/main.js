@@ -9,12 +9,19 @@ let game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game') ,
     playMusic: true
   },
   musicPlayer;
+  
 
 // let Main = function () {};
 
 Main.prototype = {
 
   preload: function () {
+    //////CENTERS PHASER GAME WINDOW////////
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVertically = true;
+    game.scale.refresh();
+    ////////////////////////////////////////
+    
     game.load.image('load-bg',    './assets/images/load-bg.jpg');
     game.load.image('loading',  './assets/images/loading.png');
     game.load.image('logo',    './assets/images/logo.gif');

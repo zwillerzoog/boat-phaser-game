@@ -91,6 +91,8 @@ function ServerGameLoop() {
 
             }
         }
+        //wall collision
+
 
         // Remove if it goes too far off screen
         if (
@@ -102,7 +104,28 @@ function ServerGameLoop() {
             bullet_array.splice(i, 1);
             i--;
         }
-    }
+        //wall2
+        if ((bullet.x > 520 && 
+            bullet.x < 540) && 
+            (bullet.y > 100 && 
+            bullet.y < 400)) {
+                
+                    bullet_array.splice(i, 1);
+                    i--;
+          
+            }
+            //wall1
+            if ((bullet.x > 140 && 
+                bullet.x < 350) && 
+                (bullet.y > 200 && 
+                bullet.y < 300)) {
+                    console.log(bullet.y)
+                    console.log(bullet.x)
+                        bullet_array.splice(i, 1);
+                        i--;
+                    
+                }
+    }   
     // Tell everyone where all the bullets are by sending the whole array
     io.emit('bullets-update', bullet_array);
 }

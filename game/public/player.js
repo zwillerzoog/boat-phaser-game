@@ -30,9 +30,7 @@ let player = {
       (game.input.keyboard.isDown(Phaser.Keyboard.UP) && game.input.keyboard.isDown(Phaser.Keyboard.Right) )
       || (game.input.keyboard.isDown(Phaser.Keyboard.W) && game.input.keyboard.isDown(Phaser.Keyboard.D))
       ) {
-        console.log(me.rotation)
         me.rotation = 3.14159;
-        console.log('owww')
       me.body.moveUp(200);
       me.body.moveRight(200)
       
@@ -42,9 +40,7 @@ let player = {
       (game.input.keyboard.isDown(Phaser.Keyboard.UP) && game.input.keyboard.isDown(Phaser.Keyboard.Left) )
       || (game.input.keyboard.isDown(Phaser.Keyboard.W) && game.input.keyboard.isDown(Phaser.Keyboard.A))
       ) {
-        console.log(me.rotation)
         me.rotation = 3.14159;
-        console.log('owww')
       me.body.moveUp(200);
       me.body.moveLeft(200)
     } 
