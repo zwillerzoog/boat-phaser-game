@@ -34,8 +34,15 @@ GameMenu.prototype = {
     this.addMenuOption('Start', function () {
       game.state.start("Game");
     });
+    this.addMenuOption('Instructions', function () {
+      game.state.start("Instructions");
+    });
     this.addMenuOption('Options', function () {
       game.state.start("Options");
+    });
+
+    this.addMenuOption('Avatars', function () {
+      game.state.start("Avatars");
     });
     this.addMenuOption('Credits', function () {
       game.state.start("Credits");
