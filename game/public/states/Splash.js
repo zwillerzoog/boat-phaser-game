@@ -80,8 +80,8 @@ Splash.prototype = {
     this.addGameStates();
     this.addGameMusic();
 
-    setTimeout(function () {
+    
       game.state.start("GameMenu");
-    }, 1500);
+
   }
 };

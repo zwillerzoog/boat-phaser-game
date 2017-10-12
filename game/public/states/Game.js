@@ -25,8 +25,10 @@ let wallHitSound;
 let wallCollisionGroup;
 let laserCollisionGroup;
 let playerCollisionGroup;
+let ghostCollisionGroup;
 let laser;
 let smoke;
+let ghost;
 
 Game.prototype = {
   // addMenuOption: function(text, callback) {
@@ -93,6 +95,8 @@ Game.prototype = {
       );
     }
 
+    game.load.image('ghost', ASSET_URL + 'ghost1_gun.png')
+
     game.load.image('laser', ASSET_URL + 'blue_beam.png');
     //===================================================
 
@@ -138,23 +142,33 @@ Game.prototype = {
     player.health = 100;             //was this.player.health
     player.maxHealth = 100;         //was this.player.maxHealth
     
+    //go to player-hit socket for health decrementing
 
+    // setInterval(() => {
+    //   if (player.health > 0) {
+    //     // console.log('hi im killin you', player.health)
+    //     player.health--
+    //   }
+    //   console.log('health', player.health)
+      
+    // }, 100)
 
-    // setInterval(function() {
-    //   console.log('hi im killin you')
-    //   player.health--
-    //   }, 1000)
+    // if (player.health < 0) {
+    //   console.log('you dead man')
+    // }
+
+   
 
     playerHealthMeter = game.add.plugin(Phaser.Plugin.HealthMeter);
     playerHealthMeter.bar(  player, 
       {
-        x: 20, 
+        x: 0, 
         y: 20, 
         width: 300, 
         height: 20
       }
 
-      
+     
       //options for the health bar
 
       /*
@@ -173,6 +187,16 @@ background: set the background (max health) color
 alpha: change the alpha for the background bar
 */
     );
+
+    // END OF GAME 
+
+    this.stage.disableVisibilityChange = true;
+    // game.add.sprite(0, 0, 'load-bg');
+
+    // this.addMenuOption('Next ->', function (e) {
+    //   this.game.state.start('GameOver');
+    // });
+
     console.log('Player Health: ', player.health);
     console.log('Player maxHealth: ', player.maxHealth);
     console.log('Player HealthMeter: ', playerHealthMeter);
@@ -197,6 +221,7 @@ alpha: change the alpha for the background bar
     wallCollisionGroup = game.physics.p2.createCollisionGroup();
     laserCollisionGroup = game.physics.p2.createCollisionGroup();
     playerCollisionGroup = game.physics.p2.createCollisionGroup();
+    ghostCollisionGroup = game.physics.p2.createCollisionGroup();
     wall1.body.setCollisionGroup(wallCollisionGroup);
     wall2.body.setCollisionGroup(wallCollisionGroup);
 
@@ -223,6 +248,7 @@ alpha: change the alpha for the background bar
 
     // allows for things to stay within world bounds
     game.physics.p2.updateBoundsCollisionGroup();
+ 
 
     // game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
     // game.physics.startSystem(Phaser.Physics.P2JS);
@@ -231,6 +257,14 @@ alpha: change the alpha for the background bar
     // game.camera.y = player.sprite.y
     // game.camera.target = player.sprite;
     // console.log('CAMERA: ', game.camera.target)
+    
+    //Create GHOST
+    ghost = game.add.sprite(100, -50, 'ghost')
+    game.physics.p2.enable(ghost);
+    ghost.body.setCollisionGroup(ghostCollisionGroup);
+    ghost.body.static = true;
+   
+
     socket = io(); // This triggers the 'connection' event on the server
     socket.emit('new-player', {
       x: player.sprite.x,
@@ -296,27 +330,36 @@ alpha: change the alpha for the background bar
     });
 
     // Listen for any player hit events and make that player flash
-    socket.on('player-hit', function(id) {
-      if (id == socket.id) {
+    socket.on('player-hit', (hit_data) => {
+      console.log(hit_data.health)
+     
+      if (hit_data.id == socket.id) {
         //If this is you
+        player.health = hit_data.health
         player.sprite.alpha = 0;
       } else {
         setTimeout((done = true), 3000);
-        other_players[id].alpha = 0;
+        other_players[hit_data.id].alpha = 0;
         // done = true;
+      }
+      if (player.health < 1 && hit_data.id == socket.id) {
+        let id = socket.id;
+        let coords = {x: player.sprite.x, y: player.sprite.y};
+        socket.emit('dead-player', {id, coords})
+        this.game.state.start('GameOver');
       }
     });
 
-    // END OF GAME 
+    socket.on('initiate-ghost', (data) => {
+      // console.log('data', data.x)
+      console.log('ghost', ghost)
+      ghost.body.x = data.x;
+      ghost.body.y = data.y;
+      console.log(data.x, '=', ghost.body.x)
+      console.log(data.y, '=', ghost.body.y)
+    })
 
-    this.stage.disableVisibilityChange = false;
-    // game.add.sprite(0, 0, 'load-bg');
-    if (player.health === 0) {
-      game.state.start('gameover');
-    }
-    // this.addMenuOption('Next ->', function (e) {
-    //   this.game.state.start('GameOver');
-    // });
+    
   
   
   },
@@ -402,6 +445,8 @@ alpha: change the alpha for the background bar
     wall1.body.collides(playerCollisionGroup);
     wall2.body.collides(playerCollisionGroup);
     player.sprite.body.collides(wallCollisionGroup);
+    player.sprite.body.collides(ghostCollisionGroup)
+    ghost.body.collides(playerCollisionGroup)
 
   },
 

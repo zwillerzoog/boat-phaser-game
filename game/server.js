@@ -20,7 +20,7 @@ http.listen(app.get('port'), function() {
 
 let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
-let score = 0; // Keeps track of all the bullets to update them on the server
+let health = 100; // Keeps track of all the bullets to update them on the server
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
     //Listen for new messages
@@ -40,6 +40,14 @@ io.on('connection', function(socket) {
         delete players[socket.id];
         io.emit('update-players', players);
     });
+
+    socket.on('dead-player', function(dead) {
+        console.log('dead', dead)
+        health = 100
+        delete players[dead.id]
+        io.emit('initiate-ghost', dead.coords)
+        io.emit('update-players', players)
+    })
 
     // Listen for move events and tell all other clients that something has moved
     socket.on('move-player', function(position_data) {
@@ -77,13 +85,10 @@ function ServerGameLoop() {
                 let dy = players[id].y - bullet.y;
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 70) {
-                    io.emit('player-hit', id); // Tell everyone this player got hit
+                    health--
+                    io.emit('player-hit', {id, health}); // Tell everyone this player got hit
                 }
-                if ((dist = 30)) {
-                    console.log('hiii');
-                    score++;
-                    io.emit('score', score);
-                }
+
             }
         }
 

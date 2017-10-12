@@ -25,17 +25,40 @@ let player = {
     // console.log('YYYY', me.y)
     // console.log('ROTATION', me.rotation)
 
-    // Move north
+    // strafe right and north
     if (
+      (game.input.keyboard.isDown(Phaser.Keyboard.UP) && game.input.keyboard.isDown(Phaser.Keyboard.Right) )
+      || (game.input.keyboard.isDown(Phaser.Keyboard.W) && game.input.keyboard.isDown(Phaser.Keyboard.D))
+      ) {
+        console.log(me.rotation)
+        me.rotation = 3.14159;
+        console.log('owww')
+      me.body.moveUp(200);
+      me.body.moveRight(200)
+      
+    }
+    //strafe left and north
+    else if (
+      (game.input.keyboard.isDown(Phaser.Keyboard.UP) && game.input.keyboard.isDown(Phaser.Keyboard.Left) )
+      || (game.input.keyboard.isDown(Phaser.Keyboard.W) && game.input.keyboard.isDown(Phaser.Keyboard.A))
+      ) {
+        console.log(me.rotation)
+        me.rotation = 3.14159;
+        console.log('owww')
+      me.body.moveUp(200);
+      me.body.moveLeft(200)
+    } 
+    // Move north
+    else if (
       game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
             game.input.keyboard.isDown(Phaser.Keyboard.W)
     ) {
       me.body.moveUp(200);
       me.rotation = 3.14159;
-    }
+    } 
 
     // Move east
-    if (
+    else if (
       game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ||
             game.input.keyboard.isDown(Phaser.Keyboard.D)
     ) {
@@ -44,7 +67,7 @@ let player = {
     }
 
     // Move west
-    if (
+    else if (
       game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ||
             game.input.keyboard.isDown(Phaser.Keyboard.A)
     ) {
