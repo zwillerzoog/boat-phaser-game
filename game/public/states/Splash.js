@@ -24,6 +24,9 @@ Splash.prototype = {
     game.load.image('mainmenu-bg', 'assets/images/mainmenu-bg.png');
     game.load.image('options-bg', 'assets/images/options-bg.jpg');
     game.load.image('gameover-bg', 'assets/images/gameover-bg.png');
+    game.load.image('instructions1', 'assets/images/instructions1.jpeg');
+    game.load.image('instructions2', 'assets/images/instructions2.jpg');
+    game.load.image('instructions3', 'assets/images/instructions3.jpg');
   },
 
   loadFonts: function () {
@@ -36,7 +39,7 @@ Splash.prototype = {
   },
 
   init: function () {
-    this.loadingBar = game.make.sprite(game.world.centerX-(387/2), 400, "loading");
+    this.loadingBar = game.make.sprite(game.world.centerX-(387/2), 400, 'loading');
     this.logo       = game.make.sprite(100, 100, 'logo');
     this.status     = game.make.text(game.world.centerX, 380, 'Loading...', {fill: 'black'});
     utils.centerGameObjects([this.logo, this.status]);
@@ -58,11 +61,11 @@ Splash.prototype = {
 
   addGameStates: function () {
 
-    game.state.add("GameMenu",GameMenu);
-    game.state.add("Game",Game);
-    game.state.add("GameOver",GameOver);
-    game.state.add("Credits",Credits);
-    game.state.add("Options",Options);
+    game.state.add('GameMenu',GameMenu);
+    game.state.add('Game',Game);
+    game.state.add('GameOver',GameOver);
+    game.state.add('Credits',Credits);
+    game.state.add('Options',Options);
   },
 
   addGameMusic: function () {
@@ -72,12 +75,12 @@ Splash.prototype = {
   },
 
   create: function() {
-    this.status.setText(`Shootin' Time!!!`);
+    this.status.setText('Shootin\' Time!!!');
     this.addGameStates();
     this.addGameMusic();
 
     setTimeout(function () {
-      game.state.start("GameMenu");
+      game.state.start('GameMenu');
     }, 1500);
   }
 };
