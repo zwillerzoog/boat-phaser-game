@@ -59,6 +59,11 @@ player = {
             me.rotation = 0;
         }
 
+
+        
+            
+         
+
         // Shoot bullet
         if (game.input.activePointer.leftButton.isDown && !this.shot) {
             let speed_x = Math.cos(me.rotation + Math.PI / 2) * 20;

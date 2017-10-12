@@ -28,6 +28,7 @@ let laserCollisionGroup;
 let playerCollisionGroup;
 let laser;
 let smoke;
+let costume = 'person_1';
 
 function createSprite(type, x, y, angle) {
     // type is an int that can be between 1 and 6 inclusive
@@ -47,23 +48,23 @@ function preload() {
     game.stage.backgroundColor = '#58da45';
     for (let i = 1; i <= 10; i++) {
         game.load.image(
-            'person' + String(i) + '_' + i,
+            'person_1',
             ASSET_URL + 'robot1_gun.png'
         );
         game.load.image(
-            'person' + String(i) + '_2',
+            'person_2',
             ASSET_URL + 'robot2_gun.png'
         );
         game.load.image(
-            'person' + String(i) + '_3',
+            'person_3',
             ASSET_URL + 'robot3_gun.png'
         );
         game.load.image(
-            'person' + String(i) + '_4',
+            'person_4',
             ASSET_URL + 'robot4_gun.png'
         );
     }
-
+    game.load.spritesheet('robot', ASSET_URL + 'robot_spritesheet.png', 49, 46)
     game.load.image('laser', ASSET_URL + 'red_beam.png');
     game.load.image('asphalt', ASSET_URL + 'asphalt.png');
     game.load.image('wall', ASSET_URL + 'wall.png');
@@ -121,12 +122,16 @@ function create() {
 
     // game.stage.disableVisibilityChange = true;
     // Create player
+
+
     let player_robot_type = String(1);
     player.sprite = game.add.sprite(
         Math.random() * WORLD_SIZE.w / 2 + WORLD_SIZE.w / 2,
         Math.random() * WORLD_SIZE.h / 2 + WORLD_SIZE.h / 2,
-        'person' + player_robot_type + '_1'
+        'robot'
     );
+
+    player.sprite.frame = 0;
     // player.sprite.anchor.setTo(0.5,0.5);
 
     game.physics.p2.enable(player.sprite);
@@ -262,11 +267,6 @@ function createLaser(xOffset, yOffset, xVelocity, yVelocity, rotationRadians) {
     laser.body.rotation = rotationRadians;
 }
 
-function incrementScore() {
-    if (done) {
-        // scoreText.text = 'Score: ' + score;
-    }
-}
 
 function GameLoop() {
     player.update();
@@ -285,6 +285,16 @@ function GameLoop() {
             other_players[id].alpha = 1;
         }
     }
+
+    //change costume
+    if (game.input.keyboard.isDown(Phaser.Keyboard.C)) {
+        console.log('hallo')
+        for (let i = 1; i < 4; i++) {
+            
+            player.sprite.frame = i
+        }
+        
+        }
 
     // Interpolate all players to where they should be
     for (let id in other_players) {
