@@ -5,7 +5,7 @@ Options.prototype = {
 
   menuConfig: {
     className: 'inverse',
-    startY: 260,
+    startY: 150,
     startX: 'center'
   },
 
