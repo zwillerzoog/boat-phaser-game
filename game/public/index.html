@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+   
+    <head>
+        <meta charset="UTF-8" />
+        <title></title>
+        <!-- Load the Phaser game library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.4.2/phaser.min.js"></script>
+        <!--healthBar plugin-->
+        <script src="../vendor/healthMeter.js"></script>
+        <!-- Load the Socket.io networking library -->
+        <script src="/socket.io/socket.io.js"></script>
+        
+        <!-- Some simple styles and fonts -->
+        <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <!-- <div id='chatbox'>
+        <ul id="messages"></ul>
+        <form action="">
+            <input id="m" autocomplete="off" /><button>Send</button>
+        </form>
+    </div> -->
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="./lib/utils.js"></script>
+    <script src="player.js"></script>
+    <script src="main.js"></script>
+    
+    
+
+    <script>
+        $(function () {
+            var socket = io();
+            $('form').submit(function () {
+                socket.emit('chat message', $('#m').val());
+                $('#m').val('');
+                return false;
+            });
+            socket.on('chat message', function (msg) {
+                console.log('messsage', msg)
+                $('#messages').append($('<li>').text(msg));
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        });
+    </script>
+</body>
+
+</html>

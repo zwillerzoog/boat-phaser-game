@@ -1,0 +1,2 @@
+
+var Credits = function () {};

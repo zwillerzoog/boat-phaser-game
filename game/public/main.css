@@ -1,0 +1,62 @@
+body, html {
+    margin: 0px;
+    position: relative;
+    font: 13px Helvetica, Arial; 
+    /* background-color: #39A4E6; */
+}
+
+canvas {
+    display: none;
+    margin-top: 50px;
+    margin: left;
+    margin-left: 20px;
+}
+#chatbox {
+    position:fixed;
+    border: 1px solid black;
+    left: 65%;
+    top: 50px;
+    bottom: 0;
+    height: 500px;
+    width: 400px;
+}
+form { 
+    position: absolute;
+    /* background: #000;  */
+    padding: 3px; 
+    /* left: 65%;  */
+    bottom: 0; 
+    width: 100%; 
+}
+form input { 
+    /* background-color: #F84CF8; */
+    border: 1px solid black; 
+    padding: 10px; 
+    width: 78%; 
+    margin-right: .5%; 
+}
+
+form button { 
+    width: 15%; 
+    background: rgb(98, 163, 84); 
+    border: 1px solid black; 
+    padding: 10px; 
+}
+
+
+
+#messages { 
+    
+    position: fixed;
+    list-style-type: none; 
+    /* margin-left: 65%;  */
+    padding: 0; 
+}
+
+#messages li { 
+    padding: 5px 10px; 
+}
+
+/* #messages li:nth-child(odd) { 
+    background: #eee; 
+} */
