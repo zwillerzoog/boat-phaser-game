@@ -4,12 +4,12 @@ let GameMenu = function() {};
 GameMenu.prototype = {
 
   menuConfig: {
-    startY: 260,
+    startY: 125,
     startX: 30
   },
 
   init: function () {
-    this.titleText = game.make.text(game.world.centerX, 100, "Game Title", {
+    this.titleText = game.make.text(game.world.centerX, 100, 'Game Title', {
       font: 'bold 60pt TheMinion',
       fill: '#FDFFB5',
       align: 'center'
@@ -32,20 +32,23 @@ GameMenu.prototype = {
     game.add.existing(this.titleText);
 
     this.addMenuOption('Start', function () {
-      game.state.start("Game");
+      game.state.start('Game');
     });
     this.addMenuOption('Instructions', function () {
       game.state.start("Instructions");
     });
     this.addMenuOption('Options', function () {
-      game.state.start("Options");
+      game.state.start('Options');
+    });
+    this.addMenuOption('Instructions', function () {
+      game.state.start('Instructions');
     });
 
     this.addMenuOption('Avatars', function () {
       game.state.start("Avatars");
     });
     this.addMenuOption('Credits', function () {
-      game.state.start("Credits");
+      game.state.start('Credits');
     });
   }
 };

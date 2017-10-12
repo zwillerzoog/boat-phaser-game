@@ -1,11 +1,10 @@
-'use strict';
 var Instructions = function(game) {};
 
 Instructions.prototype = {
 
   menuConfig: {
-    className: 'inverse',
-    startY: 150,
+    className: 'default',
+    startY: 400,
     startX: 'center'
   },
 
@@ -20,23 +19,43 @@ Instructions.prototype = {
     this.titleText.anchor.set(0.5);
     this.optionCount = 1;
   },
-  create: function () {
-    let playSound = gameOptions.playSound;
-    let playMusic = gameOptions.playMusic;
 
-    game.add.sprite(0, 0, 'options-bg');
+  createText: function(game, str, x, y, font, fill, align = 'center', anchorX = 0, anchorY = 0) {
+    let txt = game.add.text(x, y, str, {
+      font: font,
+      fill: fill,
+      align: align
+    });
+    txt.anchor.setTo(anchorX, anchorY);
+    return txt;
+  },
+
+  create: function () {
+
+    game.add.sprite(0, 0, 'instructions2').alpha = 0.3;
     game.add.existing(this.titleText);
-    this.addMenuOption(playMusic ? 'Mute Music' : 'Play Music', function (target) {
-      playMusic = !playMusic;
-      target.text = playMusic ? 'Mute Music' : 'Play Music';
-      musicPlayer.volume = playMusic ? 1 : 0;
-      console.log('MUSIC :', musicPlayer);
-      console.log('VOLUME :', musicPlayer.volume);
-    });
-    this.addMenuOption(playSound ? 'Mute Sound' : 'Play Sound', function (target) {
-      playSound = !playSound;
-      target.text = playSound ? 'Mute Sound' : 'Play Sound';
-    });
+
+    
+    //Instruction Text
+    let howToPlay = '1. Go to options';
+    this.createText(game, howToPlay, 50, 160, '30px bold murderFont', 'white', 'center');
+        
+    howToPlay = '2. Play with music or play like a savage';
+    this.createText(game, howToPlay, 50, 200, '30px bold murderFont', 'white', 'center');
+
+    howToPlay = '3. Go Back to the main Menu';
+    this.createText(game, howToPlay, 50, 240, '30px bold murderFont', 'white', 'center');
+
+    howToPlay = '4. Press Start';
+    this.createText(game, howToPlay, 50, 280, '30px bold murderFont', 'white', 'center');
+
+    howToPlay = '5. Be a Savage';
+    this.createText(game, howToPlay, 50, 320, '30px bold murderFont', 'white', 'center');
+
+    howToPlay = '6. Pay Homage in the Credits';
+    this.createText(game, howToPlay, 50, 360, '30px bold murderFont', 'white', 'center');
+    
+    
     this.addMenuOption('<- Back', function () {
       game.state.start('GameMenu');
     });

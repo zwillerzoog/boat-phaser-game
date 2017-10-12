@@ -12,8 +12,8 @@ Splash.prototype = {
     game.load.script('gameover','states/GameOver.js');
     game.load.script('credits', 'states/Credits.js');
     game.load.script('options', 'states/Options.js');
-    game.load.script('instructions', 'states/Instructions.js')
-    game.load.script('avatars', 'states/Avatars.js');
+    game.load.script('instructions', 'states/Instructions.js');
+
   },
 
   loadBgm: function () {
@@ -26,6 +26,9 @@ Splash.prototype = {
     game.load.image('mainmenu-bg', 'assets/images/mainmenu-bg.png');
     game.load.image('options-bg', 'assets/images/options-bg.jpg');
     game.load.image('gameover-bg', 'assets/images/gameover-bg.png');
+    game.load.image('instructions1', 'assets/images/instructions1.jpeg');
+    game.load.image('instructions2', 'assets/images/instructions2.jpg');
+    game.load.image('instructions3', 'assets/images/instructions3.jpeg');
   },
 
   loadFonts: function () {
@@ -38,7 +41,7 @@ Splash.prototype = {
   },
 
   init: function () {
-    this.loadingBar = game.make.sprite(game.world.centerX-(387/2), 400, "loading");
+    this.loadingBar = game.make.sprite(game.world.centerX-(387/2), 400, 'loading');
     this.logo       = game.make.sprite(100, 100, 'logo');
     this.status     = game.make.text(game.world.centerX, 380, 'Loading...', {fill: 'black'});
     utils.centerGameObjects([this.logo, this.status]);
@@ -60,28 +63,27 @@ Splash.prototype = {
 
   addGameStates: function () {
 
-    game.state.add("GameMenu",GameMenu);
-    game.state.add("Game",Game);
-    game.state.add("GameOver",GameOver);
-    game.state.add("Credits",Credits);
-    game.state.add("Options",Options);
-    game.state.add("Instructions", Instructions);
-    // game.state.add("Avatars", Avatars);
+    game.state.add('GameMenu',GameMenu);
+    game.state.add('Game',Game);
+    game.state.add('GameOver',GameOver);
+    game.state.add('Credits',Credits);
+    game.state.add('Options',Options);
+    game.state.add('Instructions',Instructions);
   },
 
   addGameMusic: function () {
-    this.musicPlayer = game.add.audio('gamemusic');
-    this.musicPlayer.loop = true;
-    this.musicPlayer.play();
+    musicPlayer = game.add.audio('gamemusic');
+    musicPlayer.loop = true;
+    musicPlayer.play();
   },
 
   create: function() {
-    this.status.setText(`Shootin' Time!!!`);
+    this.status.setText('Shootin\' Time!!!');
     this.addGameStates();
     this.addGameMusic();
 
-    
-      game.state.start("GameMenu");
-
+    setTimeout(function () {
+      game.state.start('GameMenu');
+    }, 1500);
   }
 };

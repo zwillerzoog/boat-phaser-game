@@ -22,6 +22,10 @@ var style;
         fill: 'black',
         stroke: 'black'
       },
+      special: {
+        fill: 'blue',
+        stroke: 'rgba(0,0,128,0)'
+      },
       hover: {
         fill: highlightColor,
         stroke: 'rgba(200,200,200,0.5)'
