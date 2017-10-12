@@ -9,7 +9,6 @@ let game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game') ,
     playMusic: true
   },
   musicPlayer;
-  pew;
 
 // let Main = function () {};
 

@@ -4,7 +4,7 @@ var Options = function(game) {};
 Options.prototype = {
 
   menuConfig: {
-    className: 'inverse',
+    className: 'default',
     startY: 150,
     startX: 'center'
   },
@@ -36,7 +36,7 @@ Options.prototype = {
     this.addMenuOption(playSound ? 'Mute Sound' : 'Play Sound', function (target) {
       playSound = !playSound;
       target.text = playSound ? 'Mute Sound' : 'Play Sound';
-      pew.volume = playSound ? 1 : 0; 
+      // pew.volume = playSound ? 1 : 0; 
     });
     this.addMenuOption('<- Back', function () {
       game.state.start('GameMenu');
