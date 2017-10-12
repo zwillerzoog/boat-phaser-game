@@ -393,25 +393,25 @@ alpha: change the alpha for the background bar
 
     // robot facing east
     if (player.sprite.rotation === 4.71239) {
-      createSmoke(laserBody, -2, -11);
+      this.createSmoke(laserBody, -2, -11);
     }
 
     // robot facing south
     if (player.sprite.rotation === 0) {
-      createSmoke(laserBody, -11, 0);
+      this.createSmoke(laserBody, -11, 0);
     }
 
     // robot facing west
     if (player.sprite.rotation === 1.5708) {
-      createSmoke(laserBody, -24, -13);
+      this.createSmoke(laserBody, -24, -13);
     }
 
     // robot facing north
     if (player.sprite.rotation === 3.14159) {
-      createSmoke(laserBody, -13, -22);
+      this.createSmoke(laserBody, -13, -22);
     }
 
-    animateSmoke();
+    this.animateSmoke();
     laserBody.sprite.kill();
   },
 
