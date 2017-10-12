@@ -20,7 +20,7 @@ http.listen(app.get('port'), function() {
 
 let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
-let score = 0; // Keeps track of all the bullets to update them on the server
+let health = 100; // Keeps track of all the bullets to update them on the server
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket) {
     //Listen for new messages
@@ -40,6 +40,14 @@ io.on('connection', function(socket) {
         delete players[socket.id];
         io.emit('update-players', players);
     });
+
+    socket.on('dead-player', function(dead) {
+        console.log('dead', dead)
+        health = 100
+        delete players[dead.id]
+        io.emit('initiate-ghost', dead.coords)
+        io.emit('update-players', players)
+    })
 
     // Listen for move events and tell all other clients that something has moved
     socket.on('move-player', function(position_data) {
@@ -77,15 +85,14 @@ function ServerGameLoop() {
                 let dy = players[id].y - bullet.y;
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 70) {
-                    io.emit('player-hit', id); // Tell everyone this player got hit
+                    health--
+                    io.emit('player-hit', {id, health}); // Tell everyone this player got hit
                 }
-                if ((dist = 30)) {
-                    console.log('hiii');
-                    score++;
-                    io.emit('score', score);
-                }
+
             }
         }
+        //wall collision
+
 
         // Remove if it goes too far off screen
         if (
@@ -97,7 +104,28 @@ function ServerGameLoop() {
             bullet_array.splice(i, 1);
             i--;
         }
-    }
+        //wall2
+        if ((bullet.x > 520 && 
+            bullet.x < 540) && 
+            (bullet.y > 100 && 
+            bullet.y < 400)) {
+                
+                    bullet_array.splice(i, 1);
+                    i--;
+          
+            }
+            //wall1
+            if ((bullet.x > 140 && 
+                bullet.x < 350) && 
+                (bullet.y > 200 && 
+                bullet.y < 300)) {
+                    console.log(bullet.y)
+                    console.log(bullet.x)
+                        bullet_array.splice(i, 1);
+                        i--;
+                    
+                }
+    }   
     // Tell everyone where all the bullets are by sending the whole array
     io.emit('bullets-update', bullet_array);
 }
