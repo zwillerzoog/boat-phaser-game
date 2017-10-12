@@ -99,8 +99,7 @@ Game.prototype = {
     game.load.image('asphalt', ASSET_URL + 'asphalt.png');
     game.load.image('wall', ASSET_URL + 'wall.png');
     game.load.spritesheet('smoke', ASSET_URL + 'smoke-fire.png', 16, 16);
-    game.load.audio('pew', ASSET_URL + 'heidi-pew.mp3');
-    game.load.audio('wall-hit', ASSET_URL + 'wall-hit.mp3');
+   
     //=====================================================
 
     game.load.image('healthBar', ASSET_URL + 'images/healthMeter.png');

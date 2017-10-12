@@ -15,9 +15,9 @@ Splash.prototype = {
   },
 
   loadBgm: function () {
-    // thanks Kevin Macleod at http://incompetech.com/
-    // game.load.audio('dangerous', 'assets/bgm/Dangerous.mp3');
-    // game.load.audio('exit', 'assets/bgm/Exit the Premises.mp3');
+    game.load.audio('pew', 'assets/heidi-pew.mp3');
+    game.load.audio('wall-hit',  'assets/wall-hit.mp3');
+    game.load.audio('gamemusic', 'assets/8bit.mp3');    //--- ready for when we add game music
   },
   // varios freebies found from google image search
   loadImages: function () {
@@ -65,16 +65,16 @@ Splash.prototype = {
     game.state.add("Options",Options);
   },
 
-  // addGameMusic: function () {
-  //   music = game.add.audio('dangerous');
-  //   music.loop = true;
-  //   music.play();
-  // },
+  addGameMusic: function () {
+    this.music = game.add.audio('gamemusic');
+    this.music.loop = true;
+    this.music.play();
+  },
 
   create: function() {
     this.status.setText(`Shootin' Time!!!`);
     this.addGameStates();
-    // this.addGameMusic();
+    this.addGameMusic();
 
     setTimeout(function () {
       game.state.start("GameMenu");

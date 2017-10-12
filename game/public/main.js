@@ -2,7 +2,13 @@
 // let game = new Phaser.Game(800, 600, Phaser.AUTO, 'game'), Main = function () {};
 let WINDOW_WIDTH = 750;
 let WINDOW_HEIGHT = 500;
-let game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game') , Main = function() {};
+let game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game') , 
+  Main = function() {},
+  gameOptions = {
+    playSound: true,
+    playMusic: true
+  },
+  musicPlayer;
 
 // let Main = function () {};
 
