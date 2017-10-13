@@ -57,7 +57,7 @@ Game.prototype = {
     // },
 
     createSprite: function(type, x, y, angle) {
-        sprite = game.add.sprite(x, y, 'person' + String(type) + '_' + type); //changed  "ship" to "person"    +    '_1 to type
+        sprite = game.add.sprite(x, y, `robot${type}`);
         sprite.fiction = 0.95;
 
         sprite.rotation = angle;
@@ -252,7 +252,7 @@ Game.prototype = {
             // Loop over all the player data received
             for (let id in players_data) {
                 // If the player hasn't been created yet
-                if (other_players[id] == undefined && id != socket.id) {
+                if (other_players[id] === undefined && id !== socket.id) {
                     // Make sure you don't create yourself
                     let data = players_data[id];
                     let p = Game.prototype.createSprite(
