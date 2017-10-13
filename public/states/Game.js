@@ -399,7 +399,6 @@ Game.prototype = {
         });
 
         socket.on('laser-data-for-client', data => {
-            console.log('in laser data for client');
             this.drawLaser(data);
         });
     },
@@ -451,7 +450,6 @@ Game.prototype = {
     },
 
     drawLaser: function(data) {
-        console.log('data', data);
         pew.play();
 
         // robot facing east
