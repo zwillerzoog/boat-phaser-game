@@ -22,7 +22,13 @@ let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
 let health = 100; // Keeps track of all the bullets to update them on the server
 // Tell Socket.io to start accepting connections
+let characterCostume = 1;
 io.on('connection', function(socket) {
+    socket.emit('set-costume', characterCostume);
+    characterCostume++;
+    if (characterCostume > 4) {
+        characterCostume = 1;
+    }
     //Listen for new messages
     socket.on('chat message', function(msg) {
         io.emit('chat message', msg);

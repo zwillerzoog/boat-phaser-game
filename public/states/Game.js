@@ -70,23 +70,8 @@ Game.prototype = {
         this.optionCount = 1;
         game.load.crossOrigin = 'Anonymous';
         game.stage.backgroundColor = '#58da45';
-        for (let i = 1; i <= 10; i++) {
-            game.load.image(
-                'person' + String(i) + '_' + i,
-                ASSET_URL + 'robot1_gun.png'
-            ); //+++changing assets
-            game.load.image(
-                'person' + String(i) + '_2',
-                ASSET_URL + 'robot2_gun.png'
-            );
-            game.load.image(
-                'person' + String(i) + '_3',
-                ASSET_URL + 'robot3_gun.png'
-            );
-            game.load.image(
-                'person' + String(i) + '_4',
-                ASSET_URL + 'robot4_gun.png'
-            );
+        for (let i = 1; i < 5; i++) {
+            game.load.image(`robot${i}`, ASSET_URL + `robot${i}_gun.png`);
         }
 
         game.load.image('ghost', ASSET_URL + 'ghost1_gun.png');
@@ -164,17 +149,11 @@ Game.prototype = {
 
             /*
             x: set the left x coordinate of the health meter
-
             y: set the top y coordinate of the health meter
-
             width: the max width of the health meter (thus the width of the maxHealth meter)
-
             height: the height of the meter
-
             foreground: set the foreground color
-
             background: set the background (max health) color
-
             alpha: change the alpha for the background bar
             */
         );
@@ -225,10 +204,9 @@ Game.prototype = {
         player.sprite = game.add.sprite(
             Math.random() * WORLD_SIZE.w / 2 + WORLD_SIZE.w / 2,
             Math.random() * WORLD_SIZE.h / 2 + WORLD_SIZE.h / 2,
-            'person' + player_robot_type + '_1'
+            'robot1'
         );
 
-        console.log('WHAT HAPPENS', player.sprite);
         // player.sprite.anchor.setTo(0.5,0.5);
 
         game.physics.p2.enable(player.sprite);
@@ -255,6 +233,13 @@ Game.prototype = {
         ghost.body.static = true;
 
         socket = io(); // This triggers the 'connection' event on the server
+
+        socket.on('set-costume', costumeId => {
+            player.sprite.loadTexture(`robot${costumeId}`);
+            // player.sprite
+            // reset physics
+        });
+
         socket.emit('new-player', {
             x: player.sprite.x,
             y: player.sprite.y,
