@@ -89,6 +89,7 @@ Game.prototype = {
     },
 
     create: function() {
+        other_players={}
         game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
         game.physics.startSystem(Phaser.Physics.P2JS);
         game.physics.p2.setImpactEvents(true);
@@ -282,6 +283,7 @@ Game.prototype = {
                     delete other_players[id];
                 }
             }
+            game.physics.p2.updateBoundsCollisionGroup();
         });
 
         // Listen for bullet update events
@@ -330,6 +332,7 @@ Game.prototype = {
             if (player.health < 1 && hit_data.id == socket.id) {
                 let id = socket.id;
                 let coords = { x: player.sprite.x, y: player.sprite.y };
+                other_players = {};
                 socket.emit('dead-player', { id, coords });
                 this.game.state.start('GameOver');
             }
@@ -373,10 +376,6 @@ Game.prototype = {
                 true
             );
 
-            setInterval(() => {
-                ghost.body.x = 100;
-                ghost.body.y = -50;
-            }, 7400);
         });
 
         socket.on('laser-data-for-client', data => {

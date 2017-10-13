@@ -21,14 +21,10 @@ http.listen(app.get('port'), function() {
 let players = {}; //Keeps a table of all players, the key is the socket id
 let bullet_array = [];
 let health = 100; // Keeps track of all the bullets to update them on the server
+let characterCostume = 0;
+
 // Tell Socket.io to start accepting connections
-let characterCostume = 1;
 io.on('connection', function(socket) {
-    socket.emit('set-costume', characterCostume);
-    characterCostume++;
-    if (characterCostume > 4) {
-        characterCostume = 1;
-    }
     //Listen for new messages
     socket.on('chat message', function(msg) {
         io.emit('chat message', msg);
@@ -36,6 +32,11 @@ io.on('connection', function(socket) {
     // Listen for a new player trying to connect
     socket.on('new-player', function(state) {
         console.log('New player joined with state:', state);
+        characterCostume++
+        if (characterCostume > 4) {
+            characterCostume = 1;
+        }
+        state.costume = characterCostume
         players[socket.id] = state;
         // Broadcast a signal to everyone containing the updated players list
         io.emit('update-players', players);
@@ -48,14 +49,14 @@ io.on('connection', function(socket) {
     });
 
     socket.on('dead-player', function(dead) {
-        console.log('dead', dead);
-        health = 100;
+        console.log('dead', dead)
+        health = 100
         if (players[dead.id]) {
             io.emit('initiate-ghost', dead.coords)
             }
-        delete players[dead.id];
-        io.emit('update-players', players);
-    });
+        delete players[dead.id]
+        io.emit('update-players', players)
+    })
 
     // Listen for move events and tell all other clients that something has moved
     socket.on('move-player', function(position_data) {
@@ -76,10 +77,6 @@ io.on('connection', function(socket) {
         }
         bullet_array.push(new_bullet);
     });
-
-    socket.on('laser-data', data => {
-        io.emit('laser-data-for-client', data);
-    });
 });
 
 // Update the bullets 60 times per frame and send updates
@@ -97,12 +94,14 @@ function ServerGameLoop() {
                 let dy = players[id].y - bullet.y;
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 70) {
-                    health--;
-                    io.emit('player-hit', { id, health }); // Tell everyone this player got hit
+                    health--
+                    io.emit('player-hit', {id, health}); // Tell everyone this player got hit
                 }
+
             }
         }
         //wall collision
+
 
         // Remove if it goes too far off screen
         if (
@@ -115,26 +114,27 @@ function ServerGameLoop() {
             i--;
         }
         //wall2
-        if (
-            (bullet.x > 520 &&
-            bullet.x < 540) &&
-            (bullet.y > 100 && bullet.y < 400)
-        ) {
-            bullet_array.splice(i, 1);
-            i--;
-        }
-        //wall1
-        if (
-            (bullet.x > 140 &&
-            bullet.x < 350) &&
-            (bullet.y > 200 && bullet.y < 300)
-        ) {
-            console.log(bullet.y);
-            console.log(bullet.x);
-            bullet_array.splice(i, 1);
-            i--;
-        }
-    }
+        if ((bullet.x > 520 && 
+            bullet.x < 540) && 
+            (bullet.y > 100 && 
+            bullet.y < 400)) {
+                
+                    bullet_array.splice(i, 1);
+                    i--;
+          
+            }
+            //wall1
+            if ((bullet.x > 140 && 
+                bullet.x < 350) && 
+                (bullet.y > 200 && 
+                bullet.y < 300)) {
+                    console.log(bullet.y)
+                    console.log(bullet.x)
+                        bullet_array.splice(i, 1);
+                        i--;
+                    
+                }
+    }   
     // Tell everyone where all the bullets are by sending the whole array
     io.emit('bullets-update', bullet_array);
 }
