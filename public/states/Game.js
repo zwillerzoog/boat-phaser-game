@@ -495,7 +495,7 @@ Game.prototype = {
         );
         wall1.body.collides(playerCollisionGroup);
         wall2.body.collides(playerCollisionGroup);
-        player.sprite.body.collides(wallCollisionGroup);
+        player.sprite.body.collides([wallCollisionGroup, playerCollisionGroup]);
         player.sprite.body.collides(
             ghostCollisionGroup,
             this.ghostCollisionHandler,
