@@ -58,12 +58,13 @@ Credits.prototype = {
       musicPlayer.play();
     }
     var bg = game.add.sprite(0, 0, 'instructions1');
-    this.addCredit('Music', 'Kevin Macleod');
-    this.addCredit('Developer', 'Matt McFarland');
-    this.addCredit('Lorem Ipsum', 'Mipsem Dempsum');
-    this.addCredit('Caveats', 'Keyboard Cat');
+    this.addCredit('Developer', 'Kristoffer Panahon');
+    this.addCredit('Developer', 'Heidi Marsh');
+    this.addCredit('Developer', 'Will McKelvey');
+    this.addCredit('Wenceslao Negrete', 'Huge Thank you to');
+    this.addCredit('Jesse Heaslip', 'Huge Thank you to');
     this.addCredit('Phaser.io', 'Powered By');
-    this.addCredit('for playing', 'Thank you');
+    this.addCredit('for Playing', 'Thank you');
     this.addMenuOption('<- Back', function (e) {
       game.state.start("GameMenu");
     });
