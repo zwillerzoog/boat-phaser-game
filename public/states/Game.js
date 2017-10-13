@@ -57,10 +57,6 @@ Game.prototype = {
     // },
 
     createSprite: function(type, x, y, angle) {
-        // type is an int that can be between 1 and 6 inclusive
-        // returns the sprite just created
-        game.physics.startSystem(Phaser.Physics.P2JS);
-
         sprite = game.add.sprite(x, y, 'person' + String(type) + '_' + type); //changed  "ship" to "person"    +    '_1 to type
         sprite.fiction = 0.95;
 
