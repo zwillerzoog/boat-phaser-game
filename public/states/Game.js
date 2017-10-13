@@ -300,7 +300,7 @@ Game.prototype = {
 
         // Listen for any player hit events and make that player flash
         socket.on('player-hit', hit_data => {
-            if (hit_data.id == socket.id) {
+            if (hit_data.id === socket.id) {
                 //If this is you
                 player.health = hit_data.health;
                 player.sprite.alpha = 0;
@@ -470,7 +470,7 @@ Game.prototype = {
         // Interpolate all players to where they should be
         for (let id in other_players) {
             let p = other_players[id];
-            if (p.target_x != undefined) {
+            if (p.target_x !== undefined) {
                 p.x += (p.target_x - p.x) * 0.16;
                 p.y += (p.target_y - p.y) * 0.16;
                 // Intepolate angle while avoiding the positive/negative issue
