@@ -25,10 +25,7 @@ let health = 100; // Keeps track of all the bullets to update them on the server
 let characterCostume = 1;
 io.on('connection', function(socket) {
     socket.emit('set-costume', characterCostume);
-    characterCostume++;
-    if (characterCostume > 10) {
-        characterCostume = 1;
-    }
+
     //Listen for new messages
     socket.on('chat message', function(msg) {
         io.emit('chat message', msg);
@@ -55,6 +52,11 @@ io.on('connection', function(socket) {
         delete players[dead.id];
         io.emit('update-players', players);
     });
+
+    characterCostume++;
+    if (characterCostume > 10) {
+        characterCostume = 1;
+    }
 
     // Listen for move events and tell all other clients that something has moved
     socket.on('move-player', function(position_data) {

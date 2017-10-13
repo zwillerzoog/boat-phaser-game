@@ -221,6 +221,7 @@ Game.prototype = {
         socket = io(); // This triggers the 'connection' event on the server
 
         socket.on('set-costume', costumeId => {
+            console.log('costumeId', costumeId);
             player.sprite.loadTexture(`robot${costumeId}`);
             // player.sprite
             // reset physics
@@ -323,6 +324,7 @@ Game.prototype = {
         });
 
         socket.on('initiate-ghost', data => {
+            console.log('initiate-ghost', data.characterCostume);
             let x;
             let y;
             ghost.body.x = data.coords.x;
