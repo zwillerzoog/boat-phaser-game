@@ -26,7 +26,7 @@ let characterCostume = 1;
 io.on('connection', function(socket) {
     socket.emit('set-costume', characterCostume);
     characterCostume++;
-    if (characterCostume > 11) {
+    if (characterCostume > 10) {
         characterCostume = 1;
     }
     //Listen for new messages

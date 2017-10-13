@@ -334,7 +334,7 @@ Game.prototype = {
             }
             if (player.health < 1 && hit_data.id == socket.id) {
                 let id = socket.id;
-                let coords = { x: player.sprite.x, y: player.sprite.y };
+                let coords = { x: player.sprite.x, y: player.sprite.y, angle: player.sprite.rotation };
                 other_players = {};
                 socket.emit('dead-player', { id, coords });
                 this.game.state.start('GameOver');
@@ -346,6 +346,7 @@ Game.prototype = {
             let y;
             ghost.body.x = data.coords.x;
             ghost.body.y = data.coords.y;
+            ghost.body.rotation = data.coords.angle
             ghost.loadTexture(`ghost${data.characterCostume}`);
             //750,500
             // 0,0 = top left
