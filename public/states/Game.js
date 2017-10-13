@@ -126,19 +126,6 @@ Game.prototype = {
 
         //go to player-hit socket for health decrementing
 
-        // setInterval(() => {
-        //   if (player.health > 0) {
-        //     // console.log('hi im killin you', player.health)
-        //     player.health--
-        //   }
-        //   console.log('health', player.health)
-
-        // }, 100)
-
-        // if (player.health < 0) {
-        //   console.log('you dead man')
-        // }
-
         playerHealthMeter = game.add.plugin(Phaser.Plugin.HealthMeter);
         playerHealthMeter.bar(
             player,
@@ -170,10 +157,6 @@ Game.prototype = {
         // this.addMenuOption('Next ->', function (e) {
         //   this.game.state.start('GameOver');
         // });
-
-        console.log('Player Health: ', player.health);
-        console.log('Player maxHealth: ', player.maxHealth);
-        console.log('Player HealthMeter: ', playerHealthMeter);
 
         // Walls
         let walls = game.add.group();
@@ -228,7 +211,6 @@ Game.prototype = {
         game.camera.follow = player.sprite;
         // game.camera.y = player.sprite.y
         // game.camera.target = player.sprite;
-        // console.log('CAMERA: ', game.camera.target)
 
         //Create GHOST
         ghost = game.add.sprite(100, -50, 'ghost');
@@ -266,9 +248,6 @@ Game.prototype = {
                         data.angle
                     );
                     other_players[id] = p;
-                    console.log(
-                        'Created new player at (' + data.x + ', ' + data.y + ')'
-                    );
                 }
                 players_found[id] = true;
 
@@ -321,8 +300,6 @@ Game.prototype = {
 
         // Listen for any player hit events and make that player flash
         socket.on('player-hit', hit_data => {
-            console.log(hit_data.health);
-
             if (hit_data.id == socket.id) {
                 //If this is you
                 player.health = hit_data.health;
@@ -334,7 +311,11 @@ Game.prototype = {
             }
             if (player.health < 1 && hit_data.id == socket.id) {
                 let id = socket.id;
-                let coords = { x: player.sprite.x, y: player.sprite.y };
+                let coords = {
+                    x: player.sprite.x,
+                    y: player.sprite.y,
+                    angle: player.sprite.rotation
+                };
                 other_players = {};
                 socket.emit('dead-player', { id, coords });
                 this.game.state.start('GameOver');
@@ -346,6 +327,7 @@ Game.prototype = {
             let y;
             ghost.body.x = data.coords.x;
             ghost.body.y = data.coords.y;
+            ghost.body.rotation = data.coords.angle;
             ghost.loadTexture(`ghost${data.characterCostume}`);
             //750,500
             // 0,0 = top left
@@ -368,8 +350,6 @@ Game.prototype = {
                 x = this.mathRandomizer(-100, 800);
                 y = this.mathRandomizer(-100, 600);
             }
-            console.log('x', this.mathRandomizer(750, 800));
-            console.log('y', y);
             game.add.tween(ghost.body).to(
                 {
                     x,

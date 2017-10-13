@@ -26,7 +26,7 @@ let characterCostume = 1;
 io.on('connection', function(socket) {
     socket.emit('set-costume', characterCostume);
     characterCostume++;
-    if (characterCostume > 11) {
+    if (characterCostume > 10) {
         characterCostume = 1;
     }
     //Listen for new messages
@@ -35,7 +35,6 @@ io.on('connection', function(socket) {
     });
     // Listen for a new player trying to connect
     socket.on('new-player', function(state) {
-        console.log('New player joined with state:', state);
         players[socket.id] = state;
         // Broadcast a signal to everyone containing the updated players list
         io.emit('update-players', players);
@@ -48,7 +47,6 @@ io.on('connection', function(socket) {
     });
 
     socket.on('dead-player', function(dead) {
-        console.log('dead', dead);
         health = 100;
         let coords = dead.coords;
         if (players[dead.id]) {
@@ -130,8 +128,6 @@ function ServerGameLoop() {
             bullet.x < 350 &&
             (bullet.y > 200 && bullet.y < 300)
         ) {
-            console.log(bullet.y);
-            console.log(bullet.x);
             bullet_array.splice(i, 1);
             i--;
         }
