@@ -74,7 +74,10 @@ Game.prototype = {
             game.load.image(`robot${i}`, ASSET_URL + `robot${i}_gun.png`);
         }
 
-        game.load.image('ghost', ASSET_URL + 'ghost1_gun.png');
+        for (let i = 1; i < 11; i++) {
+            game.load.image(`ghost${i}`, ASSET_URL + `ghost${i}_gun.png`);
+        }
+
         game.load.image('bullet', ASSET_URL + 'blue_beam.png');
         game.load.image('laser', ASSET_URL + 'blue_beam.png');
         //===================================================
@@ -341,8 +344,9 @@ Game.prototype = {
         socket.on('initiate-ghost', data => {
             let x;
             let y;
-            ghost.body.x = data.x;
-            ghost.body.y = data.y;
+            ghost.body.x = data.coords.x;
+            ghost.body.y = data.coords.y;
+            ghost.loadTexture(`ghost${data.characterCostume}`);
             //750,500
             // 0,0 = top left
             // 0,500 = bottom left

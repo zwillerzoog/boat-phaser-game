@@ -50,8 +50,9 @@ io.on('connection', function(socket) {
     socket.on('dead-player', function(dead) {
         console.log('dead', dead);
         health = 100;
+        let coords = dead.coords;
         if (players[dead.id]) {
-            io.emit('initiate-ghost', dead.coords);
+            io.emit('initiate-ghost', { coords, characterCostume });
         }
         delete players[dead.id];
         io.emit('update-players', players);
