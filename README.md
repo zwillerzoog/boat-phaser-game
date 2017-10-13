@@ -2,7 +2,7 @@
 by William McKelvey, Heidi Marsh, Kristoffer Panahon <br/>
 
 ## Production App
-https://test-shooter.herokuapp.com/
+https://savage-ghosting.herokuapp.com/
 
 ## Description
 You and a group of your friends (or enemies) enter the arena. You must duck, dodge, shoot, scream,...unleash absolute SAVAGERY until a victor is the last one standing. 
