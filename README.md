@@ -40,21 +40,21 @@ https://phaser.io/docs/2.6.2/index
 ## Screenshots
 #### Loading Screen <br/>
 When you start the website, the loading screen appears and completes only when it finish preloading every sprite, background, and music we used in the game. <br/>
-![LoadingScreen](README_images/loading.png "Loading Screen") <br/>
+![LoadingScreen](assets/images/loading.png "Loading Screen") <br/>
 
 #### Menu Screen <br/>
 Once the game finish loading, you are directed to the menu screen! You will have the option to play the game, see the game instructions, and see current highscores <br/>
-![MenuScreen](README_images/menu.png "Menu Screen") <br/>
+![MenuScreen](assets/images/GameMenu.png "Menu Screen") <br/>
 
 #### InfoModal Screen <br/>
 If you selected the InfoModal Option, you will see the game instructions. You can press Enter to go back to Menu screen <br/>
-![InfoModal](README_images/info.png "InfoModal Screen") <br/>
+![InfoModal](assets/images/READInstructions.png "InfoModal Screen") <br/>
 
-#### Highscores Screen <br/>
+#### Option Screen <br/>
 If you selected the HighScores Option, you will see the current highscores. You can press Enter to go back to Menu screen <br/>
-![HighScores](README_images/scores.png "HighScores") <br/>
+![OptionScreen](assets/images/Options.png "Option Screen") <br/>
 
 #### Game Screen <br/>
 If you selected the Game Option, you are directed to the game. The time shows when your flashlight runs out of juice <br/>
-![Game](README_images/game.png "Game") <br/>
+![Game](assets/images/GamePlay.png "Game") <br/>
 
