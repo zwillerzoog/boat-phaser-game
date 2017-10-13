@@ -70,7 +70,7 @@ Game.prototype = {
         this.optionCount = 1;
         game.load.crossOrigin = 'Anonymous';
         game.stage.backgroundColor = '#58da45';
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 11; i++) {
             game.load.image(`robot${i}`, ASSET_URL + `robot${i}_gun.png`);
         }
 
@@ -89,7 +89,7 @@ Game.prototype = {
     },
 
     create: function() {
-        other_players={}
+        other_players = {};
         game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
         game.physics.startSystem(Phaser.Physics.P2JS);
         game.physics.p2.setImpactEvents(true);
@@ -375,7 +375,6 @@ Game.prototype = {
                 Phaser.Easing.Quartic.In,
                 true
             );
-
         });
 
         socket.on('laser-data-for-client', data => {

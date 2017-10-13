@@ -26,7 +26,7 @@ let characterCostume = 1;
 io.on('connection', function(socket) {
     socket.emit('set-costume', characterCostume);
     characterCostume++;
-    if (characterCostume > 4) {
+    if (characterCostume > 11) {
         characterCostume = 1;
     }
     //Listen for new messages
@@ -51,8 +51,8 @@ io.on('connection', function(socket) {
         console.log('dead', dead);
         health = 100;
         if (players[dead.id]) {
-            io.emit('initiate-ghost', dead.coords)
-            }
+            io.emit('initiate-ghost', dead.coords);
+        }
         delete players[dead.id];
         io.emit('update-players', players);
     });
@@ -116,8 +116,8 @@ function ServerGameLoop() {
         }
         //wall2
         if (
-            (bullet.x > 520 &&
-            bullet.x < 540) &&
+            bullet.x > 520 &&
+            bullet.x < 540 &&
             (bullet.y > 100 && bullet.y < 400)
         ) {
             bullet_array.splice(i, 1);
@@ -125,8 +125,8 @@ function ServerGameLoop() {
         }
         //wall1
         if (
-            (bullet.x > 140 &&
-            bullet.x < 350) &&
+            bullet.x > 140 &&
+            bullet.x < 350 &&
             (bullet.y > 200 && bullet.y < 300)
         ) {
             console.log(bullet.y);
