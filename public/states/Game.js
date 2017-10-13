@@ -273,7 +273,7 @@ Game.prototype = {
         socket.on('bullets-update', function(server_bullet_array) {
             // If there's not enough bullets on the client, create them
             for (let i = 0; i < server_bullet_array.length; i++) {
-                if (bullet_array[i] == undefined) {
+                if (bullet_array[i] === undefined) {
                     bullet_array[i] = game.add.sprite(
                         server_bullet_array[i].x,
                         server_bullet_array[i].y,
@@ -310,7 +310,7 @@ Game.prototype = {
                 other_players[hit_data.id].alpha = 0;
                 // done = true;
             }
-            if (player.health < 1 && hit_data.id == socket.id) {
+            if (player.health < 1 && hit_data.id === socket.id) {
                 let id = socket.id;
                 let coords = {
                     x: player.sprite.x,
